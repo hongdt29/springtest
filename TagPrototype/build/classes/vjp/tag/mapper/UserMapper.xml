@@ -1,0 +1,21 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace = "vjp.tag.mapper.UserMapper">
+   <select id = "getUserByNameAndPassword" parameterType = "LoginInfo" resultType = "vjpUser">
+      SELECT * FROM vjpUser WHERE username = #{username} AND password = #{password};
+   </select>
+   
+   <select id = "getUserByCookie" parameterType = "String" resultType = "vjpUser">
+      SELECT * FROM vjpUser WHERE cookie = #{uuid};
+   </select>
+   
+   <update id = "updateLastLogin" parameterType = "LoginInfo">
+   		UPDATE vjpUser SET lastlogin = #{lastlogin} WHERE username = #{username} AND password = #{password};
+	</update>
+	
+	<update id = "updateCookie" parameterType = "LoginInfo">
+   		UPDATE vjpUser SET cookie = #{cookie} WHERE username = #{username} AND password = #{password};
+	</update>
+</mapper>
