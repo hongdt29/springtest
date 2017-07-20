@@ -13,6 +13,7 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
@@ -26,14 +27,18 @@ import vjp.tag.service.TagService;
 public class MainPageController {
 	String message = "Welcome to Spring MVC!";
  
+	public static String SESSION_LOGGED_USR = "LOGGED_USER";
 	@Autowired
 	private TagService tagService;
 	
-	@RequestMapping("/mainpage")
+	//@RequestMapping("/mainpage")
+	@GetMapping("mainpage")
 	public ModelAndView MainPage(HttpSession session) {
 		System.out.println("MainPage controller");
 		ModelAndView mv = new ModelAndView("MainPage");
-		vjpUser loggedUser = (vjpUser)session.getAttribute("loginedUser");
+		
+		vjpUser loggedUser = (vjpUser)session.getAttribute(SESSION_LOGGED_USR);
+		
 		if (loggedUser != null) {
 			System.out.println("Good, FOund user from session " + loggedUser.getUsername());
 			vjpTag tag = tagService.getTagByID(loggedUser.getId());

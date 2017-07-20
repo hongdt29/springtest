@@ -1,5 +1,6 @@
 package vjp.tag.service;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,12 +24,21 @@ public class UserService {
 	{
 		return userMapper.getUserByCookie(uuid);
 	}
-	public void updateLastLogin(LoginInfo info)
+	
+	
+	public void updateLastLogin(vjpUser info)
 	{
 		userMapper.updateLastLogin(info);
 	}
+	
+	
+	
 	public void updateCookie(LoginInfo info)
 	{
 		userMapper.updateCookie(info);
+	}
+	public vjpUser getUserByNameAndPasswordString(String username, String password)
+	{
+		return userMapper.getUserByNameAndPasswordString(username, password);
 	}
 }

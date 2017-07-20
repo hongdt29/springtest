@@ -7,11 +7,15 @@
       SELECT * FROM vjpUser WHERE username = #{username} AND password = #{password};
    </select>
    
+   <select id = "getUserByNameAndPasswordString" resultType = "vjpUser">
+      SELECT * FROM vjpUser WHERE username = #{username} AND password = #{password};
+   </select>
+   
    <select id = "getUserByCookie" parameterType = "String" resultType = "vjpUser">
       SELECT * FROM vjpUser WHERE cookie = #{uuid};
    </select>
    
-   <update id = "updateLastLogin" parameterType = "LoginInfo">
+   <update id = "updateLastLogin" parameterType = "vjpUser">
    		UPDATE vjpUser SET lastlogin = #{lastlogin} WHERE username = #{username} AND password = #{password};
 	</update>
 	

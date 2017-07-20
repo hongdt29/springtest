@@ -22,6 +22,7 @@
             <div class="panel-body">
             
                 <form:form id="loginForm" modelAttribute="login" action="login" method="post">
+<%--                 <form:form id="loginForm" action="login" method="post"> --%>
                     <h5 class="text-danger text-center">${abc}</h5>
                     <div class="form-group">
                         <form:label path="username" class="control-label col-sm-4">ログインID</form:label>
