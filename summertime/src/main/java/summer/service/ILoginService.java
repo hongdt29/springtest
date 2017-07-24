@@ -2,13 +2,13 @@ package summer.service;
 
 import java.util.Date;
 
-import summer.db.entity.MUser;
+import summer.db.entity.Testuser;
 import summer.formmodel.LoginForm;
 
 public interface ILoginService {
-	public MUser getUserByLoginForm(LoginForm loginInfo);
-	public MUser getUserByUserNameAndPassWord(String username, String password);
-	public void updateLastLoginDateTime(Date lastLogin, String user);
+	public Testuser getUserByLoginForm(LoginForm loginInfo);
+	public Testuser getUserByUserNameAndPassWord(String username, String password);
+	public void updateLastLoginDateTime(Testuser user);
 	
 
 }

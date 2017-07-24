@@ -4,6 +4,7 @@ public class LoginForm {
 	private String username;
 	private String password;
 	private boolean rememberme;
+	
 	public String getUsername() {
 		return username;
 	}

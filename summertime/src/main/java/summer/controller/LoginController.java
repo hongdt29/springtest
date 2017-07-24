@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.WebUtils;
 
-import summer.db.entity.MUser;
+import summer.db.entity.Testuser;
 import summer.formmodel.LoginForm;
 import summer.service.ILoginService;
 import summer.service.LoginServiceImpl;
@@ -54,18 +54,19 @@ public class LoginController {
 			
 			//Doi chieu username va password trong DB 
 			
-			MUser user = loginService.getUserByUserNameAndPassWord(username, password);
+			Testuser user = loginService.getUserByUserNameAndPassWord(username, password);
 			if (user!=null) {
 				cookieUser.setMaxAge(30*24*60*60);
 				cookiePwd.setMaxAge(30*24*60*60);
-				session.setAttribute("s_userId", user.getUserId());
-				session.setAttribute("s_pwd", user.getPassWord());
-				session.setAttribute("s_auth", user.getAuth_code());
+				session.setAttribute("s_userId", user.getUserid());
+				session.setAttribute("s_pwd", user.getPassword());
+				session.setAttribute("s_auth", user.getAuthCode());
 				session.setAttribute("s_lastlogin_datetime", user.getLastlogintime());
 				
 				// update last login
 				Date currentTime = new Date();
-				loginService.updateLastLoginDateTime(currentTime, user.getUserId());
+				user.setLastlogintime(currentTime);
+				loginService.updateLastLoginDateTime(user);
 				
 				return "redirect:/mainpage";
 				
@@ -99,31 +100,31 @@ public class LoginController {
 		
 		
 		//B2. Doi chieu DB 
-		MUser user = loginService.getUserByLoginForm(logindata);
+		Testuser user = loginService.getUserByLoginForm(logindata);
 		if(user!= null) {
+			System.out.println("[DBG] Login form. Found user, will set to cookie and session");
 			//tao cookie moi 
-			Cookie userCookie = new Cookie("c_user", user.getUserId());
-			Cookie passCookie = new Cookie("c_pwd", user.getPassWord());
+			Cookie userCookie = new Cookie("c_user", user.getUserid());
+			Cookie passCookie = new Cookie("c_pwd", user.getPassword());
 			//set the exprixy of cookie
 			userCookie.setMaxAge(30*24*60*60);
 			passCookie.setMaxAge(30*24*60*60);
 			response.addCookie(userCookie);
 			response.addCookie(passCookie);
 			// save the info to sesstion to use for the next controller 
-			session.setAttribute("s_userId", user.getUserId());
-			session.setAttribute("s_pwd", user.getPassWord());
-			session.setAttribute("s_auth", user.getAuth_code());
+			session.setAttribute("s_userId", user.getUserid());
+			session.setAttribute("s_pwd", user.getPassword());
+			session.setAttribute("s_auth", user.getAuthCode());
 			session.setAttribute("s_lastlogin_datetime", user.getLastlogintime());
 			
 			// update last login
 			Date currentTime = new Date();
-			loginService.updateLastLoginDateTime(currentTime, user.getUserId());
-			
-			
-			
+			user.setLastlogintime(currentTime);
+			loginService.updateLastLoginDateTime(user);
 			
 			return "redirect:/mainpage";
 		}else {
+			System.out.println("[DBG] Login form. case not found user");
 			model.addAttribute("errormsg", "Not found user name");
 			return "login";
 		}

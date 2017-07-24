@@ -46,7 +46,7 @@ public class SpringBootWebApplication {
 	       SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
 	       sqlSessionFactoryBean.setDataSource(dataSource());
 	       PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-	       //sqlSessionFactoryBean.setMapperLocations(resolver.getResources("classpath:/mybatis/*.xml"));
+	       sqlSessionFactoryBean.setMapperLocations(resolver.getResources("classpath:/mappers/*.xml"));
 
 	       return sqlSessionFactoryBean.getObject();
 	   }
