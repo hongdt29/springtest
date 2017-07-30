@@ -46,6 +46,10 @@
 	</div>
 	<br/><br/><br/><br/>
 	
+	
+	
+	
+	
 	 <table style = "border: 1px solid black">
 	   <thead>
 	     <tr>
@@ -56,13 +60,13 @@
 	     </tr>
 	   </thead>
 	   <tbody>
-	       <tr th:each="sb,iterStat : ${categorydatalist}">
+	     <tr th:each="row,iterStat : ${categorydatalist}">
 	       <td th:text="${iterStat.count}">#</td>
 	       <td>
-	       <a th:href="@{/categorydetail(id=${sb.id})}">
-	       <span th:text="${{sb.id}}" >#</span></a>
+		       <a th:href="@{/categorydetail(id=${row.id})}">
+		       <span th:text="${{row.id}}" >#</span></a>
 	       </td>
-	       <td th:text="${{sb.name}}">#</td>
+	       <td th:text="${{row.name}}">#</td>
 	       <td><input type="checkbox" name="chk" /></td>
 	     </tr>
 	   </tbody>

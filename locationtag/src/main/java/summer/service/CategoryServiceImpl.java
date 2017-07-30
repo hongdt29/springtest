@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import summer.db.client.McategoryMapper;
 import summer.db.entity.Mcategory;
 import summer.db.entity.McategoryExample;
+import summer.db.entity.Muser;
 
 @Service
 public class CategoryServiceImpl implements ICategoryService{
@@ -17,21 +18,38 @@ public class CategoryServiceImpl implements ICategoryService{
 	@Override
 	public List<Mcategory> getAllCategoryNotDeleted() {
 		McategoryExample query = new McategoryExample();
-		query.createCriteria();
-		
-		return categoryMapper.selectByExample(query);
+		query.createCriteria().andDeleteFlagNotEqualTo(true);
+		List<Mcategory> category = categoryMapper.selectByExample(query);
+		return category;	
 	}
 
 	@Override
-	public List<Mcategory> getAllCategoryByID(String ID) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Mcategory> getAllCategoryByID(String Id) {
+		McategoryExample query = new McategoryExample();
+		query.createCriteria().andIdEqualTo(Id).andDeleteFlagNotEqualTo(true);
+
+		List<Mcategory> category = categoryMapper.selectByExample(query);
+		return category;	
 	}
+
 
 	@Override
 	public List<Mcategory> getAllCategoryByName(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		McategoryExample query = new McategoryExample();
+		query.createCriteria().andNameEqualTo(name).andDeleteFlagNotEqualTo(true);
+
+		List<Mcategory> category = categoryMapper.selectByExample(query);
+		return category;	
+		
+	}
+
+	@Override
+	public List<Mcategory> getAllCategoryByNameAndId(String ID, String name) {
+		McategoryExample query = new McategoryExample();
+		query.createCriteria().andIdEqualTo(ID).andNameEqualTo(name).andDeleteFlagNotEqualTo(true);
+
+		List<Mcategory> category = categoryMapper.selectByExample(query);
+		return category;	
 	}
 
 }
