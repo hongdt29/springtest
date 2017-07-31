@@ -1,0 +1,12 @@
+Update New SUpport for page.
+
+1. In build.gradle, add new library 
+	compile("org.springframework.data:spring-data-commons:1.13.6.RELEASE")
+	
+	Sau do, RIght-click, choose Gradle -> Refresh Gradle Project.
+	
+2. Add new FIle PageWrapper.java in utils package. Class nay dung de cung cap cac property cho Paging.
+
+3. Sau do, trong Controller FUnction, add new code dung de Convert List to Page, chu y add new param @PageableDefault(size  = PageWrapper.MAX_PAGE_ITEM_DISPLAY, page = 0)Pageable pageable
+
+4. In category.html, add Pagination Bar.
