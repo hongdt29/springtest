@@ -58,7 +58,7 @@ public class LoginServiceImpl implements ILoginService {
 	@Override
 	public void ValidateUserNameAndPassword(BindingResult bindingResult,LoginForm logindata) {
 		if ((logindata.getUsername().length()) == 0){
-			bindingResult.rejectValue("username", "E120", "Input the username");
+			bindingResult.rejectValue("username", "", "Input the username");
 		}
 		if ((logindata.getPassword().length()) == 0){
 			bindingResult.rejectValue("password", "E121", "Input the password");

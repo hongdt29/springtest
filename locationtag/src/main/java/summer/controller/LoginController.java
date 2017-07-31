@@ -68,14 +68,10 @@ public class LoginController {
 				muser.setLastlogindatetime(currentDate);
 				loginService.updateLastLoginDateTime(muser);
 				return "redirect:/categorylist";
-				
 			}else {
-				
 				return "login";
 			}
 		}
-		
-		
 	}
 	//tao ham de xu li action login
 	@PostMapping("/login")
@@ -98,7 +94,6 @@ public class LoginController {
 		boolean isInDB =  loginService.authenticateUserNameAndPassWord(logindata.getUsername(),hashPassword);
 				
 		if (isInDB == true) {
-			
 			Cookie userName = new Cookie(COOKIE_USERID, logindata.getUsername());
 			Cookie password = new Cookie(COOKIE_PWD, hashPassword);
 			userName.setMaxAge(30*24*60*60);

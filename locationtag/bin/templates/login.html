@@ -15,9 +15,9 @@ href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
        <form th:action="@{/login}" th:object="${logindata}" method="post">
        	<h5 class="text-danger text-center">
 </h5>
-              
               <div class="form-group">
-              <label class="control-label col-sm-4">User ID</label>
+              <label class="control-l
+              abel col-sm-4">User ID</label>
                   <input type="text" name="username" id="username" 
                   class="form-control input-lg col-sm-8" autofocus="true"/>
                   <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Name Error</span>

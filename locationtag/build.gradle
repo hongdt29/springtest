@@ -41,6 +41,10 @@ dependencies {
    compile("org.webjars:bootstrap:3.3.7")
    compile("mysql:mysql-connector-java:5.1.4")
    compile("org.mybatis.spring.boot:mybatis-spring-boot-starter:1.3.0")
+   
+   // Dau tien build.gradle them library of Page
+   compile("org.springframework.data:spring-data-commons:1.13.6.RELEASE")
+   
    testCompile("junit:junit")
 }
 

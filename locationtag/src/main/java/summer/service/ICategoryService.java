@@ -9,4 +9,6 @@ public interface ICategoryService {
 	public List<Mcategory> getAllCategoryByID(String ID);
 	public List<Mcategory> getAllCategoryByName(String name);
 	public List<Mcategory> getAllCategoryByNameAndId(String ID, String name);
+	
+	public boolean updateDeleteFlag(String Id);
 }

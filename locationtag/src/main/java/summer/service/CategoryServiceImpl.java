@@ -52,4 +52,26 @@ public class CategoryServiceImpl implements ICategoryService{
 		return category;	
 	}
 
+	@Override
+	public boolean updateDeleteFlag(String Id) {
+		// Dau tien ta phai tim xem voi Id nay co Row nao khong
+		McategoryExample query = new McategoryExample();
+		query.createCriteria().andIdEqualTo(Id).andDeleteFlagNotEqualTo(true);
+
+		List<Mcategory> category = categoryMapper.selectByExample(query);
+		if (category.size() > 0) {
+			// O day nghia la da tim duoc it nhat 1 row, set Delete Flag to true
+			Mcategory currentRow = category.get(0);
+			currentRow.setDeleteFlag(true);
+			
+			// Now update DB
+			categoryMapper.updateByExample(category.get(0), query);
+			return true;
+		} else {
+			// Return false if not found in DB
+			return false;
+		}
+		
+	}
+
 }
