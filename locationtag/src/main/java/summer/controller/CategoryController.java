@@ -36,7 +36,8 @@ public class CategoryController {
 		System.out.println("[DBG] CategoryList called");
 
 		// We do the Conversion to Page display
-		Pageable newPage = new PageRequest(pageable.getPageNumber(), 5);
+		Pageable newPage = new PageRequest(pageable.getPageNumber(), 3);
+		
 		List<Mcategory> cates = categoryService.getAllCategoryNotDeleted();
 		// We not use this because now use Page
 		// model.addAttribute("categorydatalist", cates);
@@ -92,8 +93,10 @@ public class CategoryController {
 
 		for (String categoryID : searchData.getDeleteList()) {
 			// Call Service function to Update delete_flag for categoryID
+			categoryService.updateDeleteFlag(categoryID);
 		}
 		
-		return "category";
+		// Chuyen den action categorylist de no reload lai cac Row cho minh
+		return "redirect:/categorylist";
 	}
 }
