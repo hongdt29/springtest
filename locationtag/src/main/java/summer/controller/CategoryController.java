@@ -106,7 +106,7 @@ public class CategoryController {
 	}
 	
 	
-	@GetMapping(path="GoodsCreateNew.html")
+	@GetMapping("/categorylist/create")
 	public String CategoryCreateGet(@ModelAttribute("categorynewdata") CategoryCreateForm createCate,
 		Model model, HttpSession session) {
 		System.out.println("[DBG] CategoryCreate GET jump in:" + createCate.getName() + " "
@@ -115,19 +115,20 @@ public class CategoryController {
 			return "categorycreate";
 	}
 	@PostMapping(path="/categorylist/create")
-	public String CategoryCreate(@ModelAttribute("categorynewdata") CategoryCreateForm createCate,
+	public String CategoryCreate(@ModelAttribute("categorynewdata") CategoryCreateForm categorynewdata,
 		Model model, HttpSession session) {
 		
-		System.out.println("[DBG] CategoryCreate POST jump in:" + createCate.getName() + " "
-							+ createCate.getId());
+		System.out.println("[DBG] CategoryCreate POST jump in:" + categorynewdata.getName() + " "
+							+ categorynewdata.getId());
 	
 		/* O day ID cua new Category se khong co, ta phai tu tao moi hoac set AutoIncrement, need Help */
 		// Tam thoi tu tao moi
 		String randomID = UUID.randomUUID().toString().subSequence(0, 13).toString();
+		
 		Mcategory cate = new Mcategory();
 		cate.setDeleteFlag(false);
 		cate.setId(randomID);
-		cate.setName(createCate.getName());
+		cate.setName(categorynewdata.getName());
 	
 		categoryService.insertCategory(cate);
 	
@@ -135,29 +136,30 @@ public class CategoryController {
 	}
 
 
-	@GetMapping(path="GoodsEdit.html")
-	public String CategoryUpdateGetMapping(@ModelAttribute("categoryeditdata") CategoryEditForm updateCate,
+	@GetMapping(path="/categorylist/update")
+	public String CategoryUpdateGetMapping(@ModelAttribute("categoryeditdata") CategoryEditForm categoryeditdata,
 				Model model, HttpSession session, @RequestParam("id") String id) {
 		System.out.println("[DBG] CategoryUpdateGet GET jump in:" + id);
 	
 		List<Mcategory> cate = categoryService.getAllCategoryByID(id);
 		if (cate.size() > 0) {
 			Mcategory record = cate.get(0);
-			updateCate.setId(record.getId());
-			updateCate.setName(record.getName());
+			categoryeditdata.setId(record.getId());
+			categoryeditdata.setName(record.getName());
 		}
 		return "categoryedit";
 	}
 	@PostMapping(path="/categorylist/update")
-	public String CategoryUpdate(@ModelAttribute("categoryeditdata") CategoryEditForm updateCate,
+	public String CategoryUpdate(@ModelAttribute("categoryeditdata") CategoryEditForm categoryeditdata,
 				Model model, HttpSession session) {
-		System.out.println("[DBG] CategoryUpdate POST jump in:" + updateCate.getName() + " "
-						+ updateCate.getId());
+		System.out.println("[DBG] CategoryUpdate POST jump in:" + categoryeditdata.getName() + " "
+						+ categoryeditdata.getId());
 	
 		Mcategory cate = new Mcategory();
-		cate.setId(updateCate.getId());
-		cate.setName(updateCate.getName());
+		cate.setId(categoryeditdata.getId());
+		cate.setName(categoryeditdata.getName());
 		cate.setDeleteFlag(false);
+		
 		categoryService.updateCategoryByID(cate);
 	
 		return "redirect:/categorylist";

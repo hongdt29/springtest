@@ -2,13 +2,16 @@ Update for Create or Update category
 1. Trong file category.html , add/edit code de co the mo file Popup
 
 // Code nay dung de khi User click nut Create new, open popup. Co the ko can thay doi code tren cty
-<button class="btn" onclick="popup('GoodsCreateNew.html')">Create New
+<button class="btn" onclick="popup('/categorylist/create', '500', '250')">Create New
         </button>
-<br/><br/><br/><br/>
+
 	
 	
 // Code nay dung de khi User click vao Name, tao 1 GET request with id la ID cua category de cho Edit
-<a th:onclick="'javascript:popup(\'GoodsEdit.html?id='+ ${row.id} +'\')'" >
+<a th:onclick="'javascript:popup(\'/categorylist/update?id='+ ${row.id} +'\', \'500\', \'250\')'" >
+       			<span th:text="${{row.id}}" >#</span></a>
+
+CUng dong thoi tao them 2 html template moi categorycreate.html and categoryedit.html 
 
 2. Add 2 new Form Model class, CategoryCreateForm va CategoryEditForm. Deu co 2 value la id va name
 

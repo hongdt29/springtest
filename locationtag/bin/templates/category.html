@@ -13,7 +13,7 @@
 	}
 	</style>
 <script type="text/javascript">
-   function popup(url) {
+   function popup(url, w, h) {
       // open your window here
       //window.open("/categorylist/create", 'height=200,width=150');
       newwindow=window.open(url,'name','height=250,width=500');
@@ -60,7 +60,7 @@
 	
 	
 	<!-- 	     Code nay dung de khi user Click new, open Controller action ten GoodsCreateNew.html -->
-	<button class="btn" onclick="popup('GoodsCreateNew.html')">Create New
+	<button class="btn" onclick="popup('/categorylist/create', '500', '250')">Create New
         </button>
 	<br/><br/><br/><br/>
 	
@@ -87,7 +87,7 @@
 	
 	<!-- 	     Code nay dung de Khi user Click vao Ten cua category, open popup with GetMapping, id parameter -->
 	       <td>
-		       <a th:onclick="'javascript:popup(\'GoodsEdit.html?id='+ ${row.id} +'\')'" >
+		       <a th:onclick="'javascript:popup(\'/categorylist/update?id='+ ${row.id} +'\', \'500\', \'250\')'" >
        			<span th:text="${{row.id}}" >#</span></a>
 	       </td>
 	       
