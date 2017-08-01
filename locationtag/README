@@ -1,3 +1,52 @@
+Update for Create or Update category
+1. Trong file category.html , add/edit code de co the mo file Popup
+
+// Code nay dung de khi User click nut Create new, open popup. Co the ko can thay doi code tren cty
+<button class="btn" onclick="popup('GoodsCreateNew.html')">Create New
+        </button>
+<br/><br/><br/><br/>
+	
+	
+// Code nay dung de khi User click vao Name, tao 1 GET request with id la ID cua category de cho Edit
+<a th:onclick="'javascript:popup(\'GoodsEdit.html?id='+ ${row.id} +'\')'" >
+
+2. Add 2 new Form Model class, CategoryCreateForm va CategoryEditForm. Deu co 2 value la id va name
+
+3. Trong Service, add 2 new function
+
+// Ham nay dung de Insert (Create) new data
+public void insertCategory(Mcategory cate);
+
+// Ham nay dung de Update 1 Data co san dua theo ID
+public void updateCategoryByID(Mcategory cate);
+
+
+4. Trong CategoryController, add new 4 Function.
+
+// 2 function nay cho Edit Category
+@GetMapping(path="GoodsEdit.html")
+@PostMapping(path="/categorylist/update")
+
+// 2 function cho Create category
+@GetMapping(path="GoodsCreateNew.html")
+@PostMapping(path="/categorylist/create")
+
+	
+Doi voi Create new Category hay Edit new Category, se can co 1 GetMapping va 1 PostMapping.
+GetMapping la khi user an vao nut [Create New] or click vao Ten cua category, se load data vao Form neu can (trong
+truong hop nay la load cai ID cua Category can Edit)
+
+RequestMapping la khi user click button tren Form
+
+//1 van de la phai tu tao ID cho Category khi tao moi (vi User chi dien Name), hoac la ID nay set la Auto Increment. Can phai hoi Help
+//1 van de nua la chu y cach Close FOrm sau khi tao Category or Edit, code nay chua co
+
+
+
+
+
+
+
 Update New SUpport for page.
 
 1. In build.gradle, add new library 

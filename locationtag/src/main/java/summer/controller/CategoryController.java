@@ -2,6 +2,7 @@ package summer.controller;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -17,9 +18,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import summer.db.entity.Mcategory;
+import summer.formmodel.CategoryCreateForm;
+import summer.formmodel.CategoryEditForm;
 import summer.formmodel.CategorySearchForm;
 import summer.service.ICategoryService;
 import summer.util.PageWrapper;
@@ -40,24 +44,25 @@ public class CategoryController {
 		
 		List<Mcategory> cates = categoryService.getAllCategoryNotDeleted();
 		// We not use this because now use Page
-		// model.addAttribute("categorydatalist", cates);
+		model.addAttribute("categorydatalist", cates);
 		// Convert to Page
-		int start = newPage.getOffset();
-		int end = start + newPage.getPageSize();
-		if (start + newPage.getPageSize() > cates.size()) {
-			end = cates.size();
-		}
-		Page<Mcategory> pageData =  new PageImpl<>(cates.subList(start, end), newPage, cates.size());
-		// Parameter thu 2 chinh la ten cua Action nay trong PostMapping
-		PageWrapper<Mcategory> pageWrapper = new PageWrapper<>(pageData, "/categorylist");
-
-		// Then set data to view
-		model.addAttribute("categorydatalist", pageWrapper.getContent());
-		model.addAttribute("page", pageWrapper);
+		// Tam thoi comment cho nay, ko can Paging
+//		int start = newPage.getOffset();
+//		int end = start + newPage.getPageSize();
+//		if (start + newPage.getPageSize() > cates.size()) {
+//			end = cates.size();
+//		}
+//		Page<Mcategory> pageData =  new PageImpl<>(cates.subList(start, end), newPage, cates.size());
+//		// Parameter thu 2 chinh la ten cua Action nay trong PostMapping
+//		PageWrapper<Mcategory> pageWrapper = new PageWrapper<>(pageData, "/categorylist");
+//
+//		// Then set data to view
+//		model.addAttribute("categorydatalist", pageWrapper.getContent());
+//		model.addAttribute("page", pageWrapper);
 		
 		return "category";
 	}
-	@PostMapping(path="/categorylist", params= {"search"})
+	@PostMapping(path="/categorylist")
 	public String CategorySearch(@ModelAttribute("categorydata") CategorySearchForm searchData,
 			Model model, HttpServletRequest request, HttpSession sesstion){
 		System.out.println("[DBG] CategorySearch called");
@@ -97,6 +102,64 @@ public class CategoryController {
 		}
 		
 		// Chuyen den action categorylist de no reload lai cac Row cho minh
+		return "redirect:/categorylist";
+	}
+	
+	
+	@GetMapping(path="GoodsCreateNew.html")
+	public String CategoryCreateGet(@ModelAttribute("categorynewdata") CategoryCreateForm createCate,
+		Model model, HttpSession session) {
+		System.out.println("[DBG] CategoryCreate GET jump in:" + createCate.getName() + " "
+					+ createCate.getId());
+	
+			return "categorycreate";
+	}
+	@PostMapping(path="/categorylist/create")
+	public String CategoryCreate(@ModelAttribute("categorynewdata") CategoryCreateForm createCate,
+		Model model, HttpSession session) {
+		
+		System.out.println("[DBG] CategoryCreate POST jump in:" + createCate.getName() + " "
+							+ createCate.getId());
+	
+		/* O day ID cua new Category se khong co, ta phai tu tao moi hoac set AutoIncrement, need Help */
+		// Tam thoi tu tao moi
+		String randomID = UUID.randomUUID().toString().subSequence(0, 13).toString();
+		Mcategory cate = new Mcategory();
+		cate.setDeleteFlag(false);
+		cate.setId(randomID);
+		cate.setName(createCate.getName());
+	
+		categoryService.insertCategory(cate);
+	
+		return "redirect:/categorylist";
+	}
+
+
+	@GetMapping(path="GoodsEdit.html")
+	public String CategoryUpdateGetMapping(@ModelAttribute("categoryeditdata") CategoryEditForm updateCate,
+				Model model, HttpSession session, @RequestParam("id") String id) {
+		System.out.println("[DBG] CategoryUpdateGet GET jump in:" + id);
+	
+		List<Mcategory> cate = categoryService.getAllCategoryByID(id);
+		if (cate.size() > 0) {
+			Mcategory record = cate.get(0);
+			updateCate.setId(record.getId());
+			updateCate.setName(record.getName());
+		}
+		return "categoryedit";
+	}
+	@PostMapping(path="/categorylist/update")
+	public String CategoryUpdate(@ModelAttribute("categoryeditdata") CategoryEditForm updateCate,
+				Model model, HttpSession session) {
+		System.out.println("[DBG] CategoryUpdate POST jump in:" + updateCate.getName() + " "
+						+ updateCate.getId());
+	
+		Mcategory cate = new Mcategory();
+		cate.setId(updateCate.getId());
+		cate.setName(updateCate.getName());
+		cate.setDeleteFlag(false);
+		categoryService.updateCategoryByID(cate);
+	
 		return "redirect:/categorylist";
 	}
 }

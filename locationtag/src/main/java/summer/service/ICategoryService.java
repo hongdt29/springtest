@@ -11,4 +11,8 @@ public interface ICategoryService {
 	public List<Mcategory> getAllCategoryByNameAndId(String ID, String name);
 	
 	public boolean updateDeleteFlag(String Id);
+	
+	public void insertCategory(Mcategory cate);
+
+	public void updateCategoryByID(Mcategory cate);
 }

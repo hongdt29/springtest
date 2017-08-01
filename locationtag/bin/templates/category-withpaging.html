@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+	<title>Spring Security Example </title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link rel="stylesheet" type="text/css"
+	href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
+	
+	<style>
+	th, td {
+		padding: 5px;
+	}
+	</style>
+<script type="text/javascript">
+   function popup(url) {
+      // open your window here
+      //window.open("/categorylist/create", 'height=200,width=150');
+      newwindow=window.open(url,'name','height=250,width=500');
+      if (window.focus) {
+   	  newwindow.focus()
+       }
+      return false;
+   }
+
+</script>
+</head>
+<body>
+
+<div class="container">
+
+	<!-- Form Search -->
+   <form th:action="@{/categorylist}" th:object="${categorydata}" method="post">
+      <div class="form-group row">
+      		<label class="control-label col-sm-4">Category ID</label>
+          <input type="text" name="searchID" id="searchID" 
+          class="form-control col-sm-2" autofocus="true"/>
+      </div>
+      <div class="form-group row">
+	      <label class="control-label col-sm-4">Category Name</label>
+	      <input type="text" name="searchName" id="searchName" 
+	      class="form-control col-sm-2" />
+      </div>
+      <br/>
+      <div class="row">
+          <div class="col-xs-3 col-sm-3 col-md-3">
+              <input type="submit" class="btn btn-lg btn-primary btn-block" 
+              name="search" id="search" value="Search"/>
+          </div>
+      </div>
+   
+   <br/>
+	<div>
+	
+<!-- 	NEw code of delete button -->
+	    <input type="submit" class="btn btn-lg btn-primary btn-block" 
+	    name="delete" id="delete" value="Delete" onclick="return confirm('Are you sure you want to delete this item?');"/>
+	</div>
+	<button class="btn" onclick="popup('GoodsCreateNew.html')">Create New
+        </button>
+	<br/><br/><br/><br/>
+	
+	
+	<!-- Pagination Bar -->
+   <div th:fragment='paginationbar'>
+       <div class="text-left">
+           <ul class='pagination pagination-centered'>
+               <li th:class="${page.firstPage}?'disabled':''">
+                   <span th:if='${page.firstPage}'>← First</span>
+                   <a th:if='${not page.firstPage}' th:href='@{${page.url}(page=0,size=${page.size})}'>←
+                       First</a>
+               </li>
+               <li th:class="${page.hasPreviousPage}? '' : 'disabled'">
+                   <span th:if='${not page.hasPreviousPage}'>«</span>
+                   <a th:if='${page.hasPreviousPage}'
+                      th:href='@{${page.url}(page=${page.number-2},size=${page.size})}'
+                      title='Go to previous page'>«</a>
+               </li>
+               <li th:each='item : ${page.items}' th:class="${item.current}? 'active' : ''">
+                   <span th:if='${item.current}' th:text='${item.number}'>1</span>
+                   <a th:if='${not item.current}'
+                      th:href='@{${page.url}(page=${item.number-1},size=${page.size})}'><span
+                           th:text='${item.number}'>1</span></a>
+               </li>
+               <li th:class="${page.hasNextPage}? '' : 'disabled'">
+                   <span th:if='${not page.hasNextPage}'>»</span>
+                   <a th:if='${page.hasNextPage}'
+                      th:href='@{${page.url}(page=${page.number},size=${page.size})}'
+                      title='Go to next page'>»</a>
+               </li>
+               <li th:class="${page.lastPage}? 'disabled' : ''">
+                   <span th:if='${page.lastPage}'>Last →</span>
+                   <a th:if='${not page.lastPage}'
+                      th:href='@{${page.url}(page=${page.totalPages - 1},size=${page.size})}'>Last →</a>
+               </li>
+           </ul>
+       </div>
+       		
+       <div class="text-right">
+       		(<span th:text="${page.size} * ${page.number-1} + 1"></span> 
+       		- 
+       		<span th:if='${page.lastPage}'>
+       			<span th:text="${page.totalElements}"></span> /
+       		</span>
+       		<span th:if='${not page.lastPage}'>
+       			<span th:text="${page.size} * ${page.number}"></span> /
+       		</span>
+       		
+       		<span th:text="${page.totalElements}"></span>件)
+       </div>
+   </div>
+   
+   
+   
+   
+   
+   
+	 <table style = "border: 1px solid black">
+	   <thead>
+	     <tr>
+	       <th>#</th>
+	       <th><a th:href="@{/categorylist/sortid}">Category ID</a></th>
+	       <th><a th:href="@{/categorylist/sortname}">Category Name</a></th>
+	       <th>Delete?</th>
+	     </tr>
+	   </thead>
+	   <tbody>
+	     <tr th:each="row,iterStat : ${categorydatalist}">
+	     
+<!-- 	     Modify this for Paging -->
+	       <td th:text="${iterStat.count} + ${page.size} * ${page.number-1}">#</td>
+	       
+	       
+	       <td>
+		       <a th:onclick="'javascript:popup(\'GoodsEdit.html?id='+ ${sb.id} +'\')'" >
+       <span th:text="${{sb.id}}" >#</span></a>
+	       </td>
+	       <td th:text="${{row.name}}">#</td>
+	       
+<!-- 	       NEw code -->
+	       <td><input type="checkbox" th:field="*{deleteList}" th:value="${{row.id}}"/></td>
+	     </tr>
+	   </tbody>
+	 </table>
+	 
+	 
+	 
+	 
+	 
+<!-- 	 Add Paging -->
+	<!-- Pagination Bar -->
+   <div th:fragment='paginationbar'>
+       <div class="text-left">
+           <ul class='pagination pagination-centered'>
+               <li th:class="${page.firstPage}?'disabled':''">
+                   <span th:if='${page.firstPage}'>← First</span>
+                   <a th:if='${not page.firstPage}' th:href='@{${page.url}(page=0,size=${page.size})}'>←
+                       First</a>
+               </li>
+               <li th:class="${page.hasPreviousPage}? '' : 'disabled'">
+                   <span th:if='${not page.hasPreviousPage}'>«</span>
+                   <a th:if='${page.hasPreviousPage}'
+                      th:href='@{${page.url}(page=${page.number-2},size=${page.size})}'
+                      title='Go to previous page'>«</a>
+               </li>
+               <li th:each='item : ${page.items}' th:class="${item.current}? 'active' : ''">
+                   <span th:if='${item.current}' th:text='${item.number}'>1</span>
+                   <a th:if='${not item.current}'
+                      th:href='@{${page.url}(page=${item.number-1},size=${page.size})}'><span
+                           th:text='${item.number}'>1</span></a>
+               </li>
+               <li th:class="${page.hasNextPage}? '' : 'disabled'">
+                   <span th:if='${not page.hasNextPage}'>»</span>
+                   <a th:if='${page.hasNextPage}'
+                      th:href='@{${page.url}(page=${page.number},size=${page.size})}'
+                      title='Go to next page'>»</a>
+               </li>
+               <li th:class="${page.lastPage}? 'disabled' : ''">
+                   <span th:if='${page.lastPage}'>Last →</span>
+                   <a th:if='${not page.lastPage}'
+                      th:href='@{${page.url}(page=${page.totalPages - 1},size=${page.size})}'>Last →</a>
+               </li>
+           </ul>
+       </div>
+       		
+       <div class="text-right">
+       		(<span th:text="${page.size} * ${page.number-1} + 1"></span> 
+       		- 
+       		<span th:if='${page.lastPage}'>
+       			<span th:text="${page.totalElements}"></span> /
+       		</span>
+       		<span th:if='${not page.lastPage}'>
+       			<span th:text="${page.size} * ${page.number}"></span> /
+       		</span>
+       		
+       		<span th:text="${page.totalElements}"></span>件)
+       </div>
+   </div>
+</form>
+</div>
+
+</body>
+</html>

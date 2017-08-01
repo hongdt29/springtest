@@ -74,4 +74,17 @@ public class CategoryServiceImpl implements ICategoryService{
 		
 	}
 
+	@Override
+	public void insertCategory(Mcategory cate) {
+		categoryMapper.insert(cate);
+	}
+
+	@Override
+	public void updateCategoryByID(Mcategory cate) {
+		McategoryExample criteria = new McategoryExample();
+		criteria.createCriteria().andIdEqualTo(cate.getId());
+
+		categoryMapper.updateByExample(cate, criteria);
+	}
+
 }
