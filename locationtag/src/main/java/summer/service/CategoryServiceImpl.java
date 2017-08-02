@@ -19,6 +19,9 @@ public class CategoryServiceImpl implements ICategoryService{
 	public List<Mcategory> getAllCategoryNotDeleted() {
 		McategoryExample query = new McategoryExample();
 		query.createCriteria().andDeleteFlagNotEqualTo(true);
+		query.setOrderByClause("id DESC");
+		//query.setOrderByClause("id ASC");
+		
 		List<Mcategory> category = categoryMapper.selectByExample(query);
 		return category;	
 	}
@@ -81,10 +84,7 @@ public class CategoryServiceImpl implements ICategoryService{
 
 	@Override
 	public void updateCategoryByID(Mcategory cate) {
-		McategoryExample criteria = new McategoryExample();
-		criteria.createCriteria().andIdEqualTo(cate.getId());
-
-		categoryMapper.updateByExample(cate, criteria);
+		categoryMapper.updateByPrimaryKey(cate);
 	}
 
 }

@@ -30,41 +30,62 @@ import summer.util.PageWrapper;
 
 @Controller
 public class CategoryController {
+	public static String S_SEARCH_ID = "s_searchid";
+	public static String S_SEARCH_NAME = "s_searchname";
+	public static String S_SORTID = "ASC";
+	
 	@Autowired
 	private ICategoryService categoryService;
 	
 	@GetMapping("/categorylist")
 	public String CategoryList(@ModelAttribute("categorydata") CategorySearchForm searchData,
-			Model model, HttpServletRequest request, HttpSession sesstion,
+			Model model, HttpServletRequest request, HttpSession session,
 			@PageableDefault(size  = PageWrapper.MAX_PAGE_ITEM_DISPLAY, page = 0)Pageable pageable){
 		System.out.println("[DBG] CategoryList called");
-
-		// We do the Conversion to Page display
-		Pageable newPage = new PageRequest(pageable.getPageNumber(), 3);
 		
-		List<Mcategory> cates = categoryService.getAllCategoryNotDeleted();
-		// We not use this because now use Page
-		model.addAttribute("categorydatalist", cates);
-		// Convert to Page
-		// Tam thoi comment cho nay, ko can Paging
-//		int start = newPage.getOffset();
-//		int end = start + newPage.getPageSize();
-//		if (start + newPage.getPageSize() > cates.size()) {
-//			end = cates.size();
-//		}
-//		Page<Mcategory> pageData =  new PageImpl<>(cates.subList(start, end), newPage, cates.size());
-//		// Parameter thu 2 chinh la ten cua Action nay trong PostMapping
-//		PageWrapper<Mcategory> pageWrapper = new PageWrapper<>(pageData, "/categorylist");
-//
-//		// Then set data to view
-//		model.addAttribute("categorydatalist", pageWrapper.getContent());
-//		model.addAttribute("page", pageWrapper);
+		String s_searchId= (String) session.getAttribute(S_SEARCH_ID);
+		String s_searchName = (String) session.getAttribute(S_SEARCH_NAME);
+		if(s_searchId !=null && s_searchName != null ) {
+			searchData.setSearchID(s_searchId);
+			searchData.setSearchName(s_searchName);
+			
+			if (s_searchId.equals("")&& s_searchName.equals("")) {
+				List<Mcategory> cates = categoryService.getAllCategoryNotDeleted();
+				model.addAttribute("categorydatalist", cates);
+			}else if(s_searchId.equals("") == false && s_searchName.equals("") == true) {
+				// ID not empty, nameis empty
+				List<Mcategory> cates = categoryService.getAllCategoryByID(s_searchId);
+				model.addAttribute("categorydatalist", cates);
+			} else if(s_searchId.equals("") == true && s_searchName.equals("") == false) {
+				// Name not empty, ID is  empty
+				List<Mcategory> cates = categoryService.getAllCategoryByName(s_searchName);
+				model.addAttribute("categorydatalist", cates);
+			} else if(s_searchId.equals("") == false && s_searchName.equals("") == false) {
+				List<Mcategory> cates = categoryService.getAllCategoryByNameAndId(s_searchId, s_searchName);
+				model.addAttribute("categorydatalist", cates);
+			}
+			
+		}else {
+			List<Mcategory> cates = categoryService.getAllCategoryNotDeleted();
+			// We not use this because now use Page
+			model.addAttribute("categorydatalist", cates);
+		}
+		
+		
+		
+		
+
+		
+//		We do the Conversion to Page display
+//		Pageable newPage = new PageRequest(pageable.getPageNumber(), 3);
+		
+		
 		
 		return "category";
 	}
 	@PostMapping(path="/categorylist")
 	public String CategorySearch(@ModelAttribute("categorydata") CategorySearchForm searchData,
-			Model model, HttpServletRequest request, HttpSession sesstion){
+			Model model, HttpServletRequest request, HttpSession session){
 		System.out.println("[DBG] CategorySearch called");
 		System.out.println("[DBG] searchData: " + searchData.getSearchID() + searchData.getSearchName());
 //
@@ -87,6 +108,9 @@ public class CategoryController {
 			List<Mcategory> cates = categoryService.getAllCategoryByNameAndId(categoryId, categoryName);
 			model.addAttribute("categorydatalist", cates);
 		}
+		
+		session.setAttribute(S_SEARCH_NAME, categoryName);
+		session.setAttribute(S_SEARCH_ID, categoryId);
 		return "category";
 	}
 	
@@ -163,5 +187,17 @@ public class CategoryController {
 		categoryService.updateCategoryByID(cate);
 	
 		return "redirect:/categorylist";
+	}
+	
+	@GetMapping("/categorylist/sortid")
+	public String CategorySortID(@ModelAttribute("categorydata") CategorySearchForm searchData,
+			Model model, HttpServletRequest request, HttpSession session){
+		System.out.println("[DBG] CategorySortID called");
+		
+		
+		List<Mcategory> cates = categoryService.getAllCategoryNotDeleted();
+		// We not use this because now use Page
+		model.addAttribute("categorydatalist", cates);
+		return "category";
 	}
 }

@@ -33,12 +33,12 @@
    <form th:action="@{/categorylist}" th:object="${categorydata}" method="post">
       <div class="form-group row">
       		<label class="control-label col-sm-4">Category ID</label>
-          <input type="text" name="searchID" id="searchID" 
+          <input type="text" th:field="*{searchID}" 
           class="form-control col-sm-2" autofocus="true"/>
       </div>
       <div class="form-group row">
 	      <label class="control-label col-sm-4">Category Name</label>
-	      <input type="text" name="searchName" id="searchName" 
+	      <input type="text" th:field="*{searchName}"   
 	      class="form-control col-sm-2" />
       </div>
       <br/>
