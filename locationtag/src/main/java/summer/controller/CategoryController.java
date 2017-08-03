@@ -32,7 +32,8 @@ import summer.util.PageWrapper;
 public class CategoryController {
 	public static String S_SEARCH_ID = "s_searchid";
 	public static String S_SEARCH_NAME = "s_searchname";
-	public static String S_SORTID = "ASC";
+	public static String S_SORT_COLUMN = "s_sortcol";
+	public static String S_SORT_ORDER = "s_sortorder";
 	
 	@Autowired
 	private ICategoryService categoryService;
@@ -43,6 +44,16 @@ public class CategoryController {
 			@PageableDefault(size  = PageWrapper.MAX_PAGE_ITEM_DISPLAY, page = 0)Pageable pageable){
 		System.out.println("[DBG] CategoryList called");
 		
+		// Lay cac gia tri tu DB ra de tim ra order by clause
+		String dbOrderBy = "";
+		String sortOrder = (String) session.getAttribute(S_SORT_ORDER);
+		String sortColumn = (String) session.getAttribute(S_SORT_COLUMN);
+		if (sortOrder == null && sortColumn == null) {
+			sortOrder = "ASC";
+			sortColumn = "id";
+		}
+		dbOrderBy = sortColumn + " " + sortOrder;
+		
 		String s_searchId= (String) session.getAttribute(S_SEARCH_ID);
 		String s_searchName = (String) session.getAttribute(S_SEARCH_NAME);
 		if(s_searchId !=null && s_searchName != null ) {
@@ -50,31 +61,26 @@ public class CategoryController {
 			searchData.setSearchName(s_searchName);
 			
 			if (s_searchId.equals("")&& s_searchName.equals("")) {
-				List<Mcategory> cates = categoryService.getAllCategoryNotDeleted();
+				List<Mcategory> cates = categoryService.getAllCategoryNotDeleted(dbOrderBy);
 				model.addAttribute("categorydatalist", cates);
 			}else if(s_searchId.equals("") == false && s_searchName.equals("") == true) {
 				// ID not empty, nameis empty
-				List<Mcategory> cates = categoryService.getAllCategoryByID(s_searchId);
+				List<Mcategory> cates = categoryService.getAllCategoryByID(s_searchId, dbOrderBy);
 				model.addAttribute("categorydatalist", cates);
 			} else if(s_searchId.equals("") == true && s_searchName.equals("") == false) {
 				// Name not empty, ID is  empty
-				List<Mcategory> cates = categoryService.getAllCategoryByName(s_searchName);
+				List<Mcategory> cates = categoryService.getAllCategoryByName(s_searchName, dbOrderBy);
 				model.addAttribute("categorydatalist", cates);
 			} else if(s_searchId.equals("") == false && s_searchName.equals("") == false) {
-				List<Mcategory> cates = categoryService.getAllCategoryByNameAndId(s_searchId, s_searchName);
+				List<Mcategory> cates = categoryService.getAllCategoryByNameAndId(s_searchId, s_searchName, dbOrderBy);
 				model.addAttribute("categorydatalist", cates);
 			}
 			
 		}else {
-			List<Mcategory> cates = categoryService.getAllCategoryNotDeleted();
+			List<Mcategory> cates = categoryService.getAllCategoryNotDeleted(dbOrderBy);
 			// We not use this because now use Page
 			model.addAttribute("categorydatalist", cates);
 		}
-		
-		
-		
-		
-
 		
 //		We do the Conversion to Page display
 //		Pageable newPage = new PageRequest(pageable.getPageNumber(), 3);
@@ -88,24 +94,33 @@ public class CategoryController {
 			Model model, HttpServletRequest request, HttpSession session){
 		System.out.println("[DBG] CategorySearch called");
 		System.out.println("[DBG] searchData: " + searchData.getSearchID() + searchData.getSearchName());
+		String dbOrderBy = "";
+		String sortOrder = (String) session.getAttribute(S_SORT_ORDER);
+		String sortColumn = (String) session.getAttribute(S_SORT_COLUMN);
+		if (sortOrder == null && sortColumn == null) {
+			sortOrder = "ASC";
+			sortColumn = "id";
+		}
+		dbOrderBy = sortColumn + " " + sortOrder;
+		
 //
 //		List<Mcategory> cates = categoryService.getAllCategoryNotDeleted();
 //		model.addAttribute("categorydatalist", cates);
 		String categoryId = searchData.getSearchID();
 		String categoryName = searchData.getSearchName();
 		if (categoryId.equals("")&& categoryName.equals("")) {
-			List<Mcategory> cates = categoryService.getAllCategoryNotDeleted();
+			List<Mcategory> cates = categoryService.getAllCategoryNotDeleted(dbOrderBy);
 			model.addAttribute("categorydatalist", cates);
 		}else if(categoryId.equals("") == false && categoryName.equals("") == true) {
 			// ID not empty, nameis empty
-			List<Mcategory> cates = categoryService.getAllCategoryByID(categoryId);
+			List<Mcategory> cates = categoryService.getAllCategoryByID(categoryId, dbOrderBy);
 			model.addAttribute("categorydatalist", cates);
 		} else if(categoryId.equals("") == true && categoryName.equals("") == false) {
 			// Name not empty, ID is  empty
-			List<Mcategory> cates = categoryService.getAllCategoryByName(categoryName);
+			List<Mcategory> cates = categoryService.getAllCategoryByName(categoryName, dbOrderBy);
 			model.addAttribute("categorydatalist", cates);
 		} else if(categoryId.equals("") == false && categoryName.equals("") == false) {
-			List<Mcategory> cates = categoryService.getAllCategoryByNameAndId(categoryId, categoryName);
+			List<Mcategory> cates = categoryService.getAllCategoryByNameAndId(categoryId, categoryName, dbOrderBy);
 			model.addAttribute("categorydatalist", cates);
 		}
 		
@@ -124,9 +139,9 @@ public class CategoryController {
 			// Call Service function to Update delete_flag for categoryID
 			categoryService.updateDeleteFlag(categoryID);
 		}
-		
+		model.addAttribute("infomessage", "Deleted item " + searchData.getDeleteList().size());
 		// Chuyen den action categorylist de no reload lai cac Row cho minh
-		return "redirect:/categorylist";
+		return "category";
 	}
 	
 	
@@ -164,8 +179,8 @@ public class CategoryController {
 	public String CategoryUpdateGetMapping(@ModelAttribute("categoryeditdata") CategoryEditForm categoryeditdata,
 				Model model, HttpSession session, @RequestParam("id") String id) {
 		System.out.println("[DBG] CategoryUpdateGet GET jump in:" + id);
-	
-		List<Mcategory> cate = categoryService.getAllCategoryByID(id);
+		String dbOrderBy = "id " + "ASC";
+		List<Mcategory> cate = categoryService.getAllCategoryByID(id, dbOrderBy);
 		if (cate.size() > 0) {
 			Mcategory record = cate.get(0);
 			categoryeditdata.setId(record.getId());
@@ -193,11 +208,44 @@ public class CategoryController {
 	public String CategorySortID(@ModelAttribute("categorydata") CategorySearchForm searchData,
 			Model model, HttpServletRequest request, HttpSession session){
 		System.out.println("[DBG] CategorySortID called");
+
+		// VI la click vao cot ID, nen tieu chi sort se la cot ID
+		session.setAttribute(S_SORT_COLUMN, "id");
+		String sortOrder = (String) session.getAttribute(S_SORT_ORDER);
+		if (sortOrder != null) {
+			// Thay doi cot Sort, neu la tang dan thi xet la giam dan
+			if(sortOrder.equals("ASC")) {
+				sortOrder = "DESC";
+			} else if(sortOrder.equals("DESC")) {
+				sortOrder = "ASC";
+			}
+			// ta luu tieu chi Sort vao session
+			session.setAttribute(S_SORT_ORDER, sortOrder);
+		} else {
+			// Mac dinh la Tang dan neu ko chua tung co session
+			session.setAttribute(S_SORT_ORDER, "ASC");
+		}
+		// Bay gio chuyen sang search controller voi nhung gia tri minh luu vao session roi
+		return "redirect:/categorylist";
+	}
+	
+	@GetMapping("/categorylist/sortname")
+	public String CategorySortName(@ModelAttribute("categorydata") CategorySearchForm searchData,
+			Model model, HttpServletRequest request, HttpSession session){
+		System.out.println("[DBG] CategorySortID called");
 		
-		
-		List<Mcategory> cates = categoryService.getAllCategoryNotDeleted();
-		// We not use this because now use Page
-		model.addAttribute("categorydatalist", cates);
-		return "category";
+		session.setAttribute(S_SORT_COLUMN, "name");
+		String sortOrder = (String) session.getAttribute(S_SORT_ORDER);
+		if (sortOrder != null) {
+			if(sortOrder.equals("ASC")) {
+				sortOrder = "DESC";
+			} else if(sortOrder.equals("DESC")) {
+				sortOrder = "ASC";
+			}
+			session.setAttribute(S_SORT_ORDER, sortOrder);
+		} else {
+			session.setAttribute(S_SORT_ORDER, "ASC");
+		}
+		return "redirect:/categorylist";
 	}
 }

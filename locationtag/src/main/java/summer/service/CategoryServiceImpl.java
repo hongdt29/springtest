@@ -16,41 +16,45 @@ public class CategoryServiceImpl implements ICategoryService{
 	private McategoryMapper categoryMapper;
 	
 	@Override
-	public List<Mcategory> getAllCategoryNotDeleted() {
+	public List<Mcategory> getAllCategoryNotDeleted(String orderBy) {
 		McategoryExample query = new McategoryExample();
 		query.createCriteria().andDeleteFlagNotEqualTo(true);
-		query.setOrderByClause("id DESC");
-		//query.setOrderByClause("id ASC");
+		//set order by clause to all 
+		query.setOrderByClause(orderBy);
+		//query.setOrderByClause("id DESC");
 		
 		List<Mcategory> category = categoryMapper.selectByExample(query);
 		return category;	
 	}
 
 	@Override
-	public List<Mcategory> getAllCategoryByID(String Id) {
+	public List<Mcategory> getAllCategoryByID(String Id, String orderBy) {
 		McategoryExample query = new McategoryExample();
-		query.createCriteria().andIdEqualTo(Id).andDeleteFlagNotEqualTo(true);
-
+		query.createCriteria().andIdLike("%" + Id + "%").andDeleteFlagNotEqualTo(true);
+		query.setOrderByClause(orderBy);
+		
 		List<Mcategory> category = categoryMapper.selectByExample(query);
 		return category;	
 	}
 
 
 	@Override
-	public List<Mcategory> getAllCategoryByName(String name) {
+	public List<Mcategory> getAllCategoryByName(String name, String orderBy) {
 		McategoryExample query = new McategoryExample();
-		query.createCriteria().andNameEqualTo(name).andDeleteFlagNotEqualTo(true);
-
+		query.createCriteria().andNameLike("%" + name + "%").andDeleteFlagNotEqualTo(true);
+		query.setOrderByClause(orderBy);
+		//andNameEqualTo(name)   -> andNameLike("%" + name + "%")
 		List<Mcategory> category = categoryMapper.selectByExample(query);
 		return category;	
 		
 	}
 
 	@Override
-	public List<Mcategory> getAllCategoryByNameAndId(String ID, String name) {
+	public List<Mcategory> getAllCategoryByNameAndId(String ID, String name, String orderBy) {
 		McategoryExample query = new McategoryExample();
-		query.createCriteria().andIdEqualTo(ID).andNameEqualTo(name).andDeleteFlagNotEqualTo(true);
-
+		query.createCriteria().andIdLike("%" + ID + "%").andNameLike("%" + name + "%").andDeleteFlagNotEqualTo(true);
+		query.setOrderByClause(orderBy);
+		
 		List<Mcategory> category = categoryMapper.selectByExample(query);
 		return category;	
 	}
@@ -65,6 +69,7 @@ public class CategoryServiceImpl implements ICategoryService{
 		if (category.size() == 1) {
 			// O day nghia la da tim duoc it nhat 1 row, set Delete Flag to true
 			Mcategory currentRow = category.get(0);
+			// int version = currentRow.getVersion();
 			currentRow.setDeleteFlag(true);
 			
 			// Now update DB
@@ -74,7 +79,6 @@ public class CategoryServiceImpl implements ICategoryService{
 			// Return false if not found in DB
 			return false;
 		}
-		
 	}
 
 	@Override
@@ -84,6 +88,16 @@ public class CategoryServiceImpl implements ICategoryService{
 
 	@Override
 	public void updateCategoryByID(Mcategory cate) {
+//		McategoryExample query = new McategoryExample();
+//		query.createCriteria().andIdEqualTo(Id);
+//		List<Mcategory> category = categoryMapper.selectByExample(query);
+//		if (category.size() == 1) {
+//			Mcategory currentRow = category.get(0);
+//			int version = currentRow.getVersion();
+//			currentRow.setVersion(version + 1);
+//			categoryMapper.updateByExample(currentRow, query);
+//		}
+		
 		categoryMapper.updateByPrimaryKey(cate);
 	}
 

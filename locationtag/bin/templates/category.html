@@ -67,21 +67,21 @@
    
    
    
-   
+   	<h2><span th:text="${infomessage}"></span></h2>
 	 <table style = "border: 1px solid black">
 	   <thead>
 	     <tr>
 	       <th>#</th>
 	       <th><a th:href="@{/categorylist/sortid}">Category ID</a></th>
 	       <th><a th:href="@{/categorylist/sortname}">Category Name</a></th>
-	       <th>Delete?</th>
+	       <th><input type="checkbox" name="select-all" id="select-all" /> Toggle All</th>
 	     </tr>
 	   </thead>
 	   <tbody>
 	     <tr th:each="row,iterStat : ${categorydatalist}">
 	     
 <!-- 	     Modify this for Paging -->
-	       <td th:text="${iterStat.count}">#</td>
+	       <td th:text="${iterStat.count} + 1">#</td>
 	
 	
 	
