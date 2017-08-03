@@ -1,3 +1,12 @@
+De search name COntains
+
+Thay the 
+	andNameEqualTo(name)   -> andNameLike("%" + name + "%")
+	andIdEqualTo(name)   -> andIdLike("%" + Id + "%")
+
+
+
+
 Update for Create or Update category
 1. Trong file category.html , add/edit code de co the mo file Popup
 
