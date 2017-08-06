@@ -72,8 +72,29 @@
 	   <thead>
 	     <tr>
 	       <th>#</th>
-	       <th><a th:href="@{/categorylist/sortid}">Category ID</a></th>
-	       <th><a th:href="@{/categorylist/sortname}">Category Name</a></th>
+	       
+	       <th>
+	       <a th:href="@{/categorylist/sortid}">Category ID
+	       		<span th:if='${ isOrderById}'>
+		       		<span th:if='${isOrderAsc}'>
+		       			<span class="glyphicon glyphicon-sort-by-attributes"></span>
+		       		</span>
+		       		<span th:if='${ not isOrderAsc}'>
+		       			<span class="glyphicon glyphicon-sort-by-attributes-alt"></span>
+		       		</span>
+	       		</span>
+	       </a></th>
+	       <th><a th:href="@{/categorylist/sortname}">Category Name
+	       		<span th:if='${not isOrderById }'>
+		       		<span th:if='${isOrderAsc}'>
+		       			<span class="glyphicon glyphicon-sort-by-attributes"></span>
+		       		</span>
+		       		<span th:if='${ not isOrderAsc}'>
+		       			<span class="glyphicon glyphicon-sort-by-attributes-alt"></span>
+		       		</span>
+	       		</span>
+	       </a></th>
+	       
 	       <th><input type="checkbox" name="select-all" id="select-all" /> Toggle All</th>
 	     </tr>
 	   </thead>
