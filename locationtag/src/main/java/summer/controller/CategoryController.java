@@ -44,14 +44,11 @@ public class CategoryController {
 			@PageableDefault(size  = PageWrapper.MAX_PAGE_ITEM_DISPLAY, page = 0)Pageable pageable){
 		System.out.println("[DBG] CategoryList called");
 
-		// Lay cac gia tri tu DB ra de tim ra order by clause
 		String dbOrderBy = "";
-		// Bien session nay the hien dang sap xep theo column nao, id or name
-		String s_sortColum = (String) session.getAttribute(S_SORT_COLUMN);
-		// Bien nay the hien dang sap xep theo order nao, ASC or DESC
+		
+		String s_sortColum = (String) session.getAttribute(S_SORT_COLUMN);		
 		String s_sortOrder = (String) session.getAttribute(S_SORT_ORDER);
-		// Kiem tra xem 2 bien session Sap xep theo Cot va theo Thu tu duoc luu
-		// trong session chua
+		
 		if (s_sortColum== null || s_sortOrder == null ) {
 			// Truong hop nay chua duoc luu, ta set 1 gia tri default
 			dbOrderBy = "id ASC";
@@ -59,29 +56,14 @@ public class CategoryController {
 			session.setAttribute(S_SORT_ORDER, "ASC");
 			
 			// Set 2 bien nay vao model de hien thi icon sorting tren view
-			model.addAttribute("isOrderById", true);
-			model.addAttribute("isOrderAsc", true);
+			model.addAttribute("mOrderBy", "id");
+			model.addAttribute("mOrder", "ASC");
 		}else {
 			// bien OrderBy string de sap xep trong DB
 			dbOrderBy = s_sortColum + " " + s_sortOrder;
 			
-			// COde nay de hien thi icon sap xep
-			// Neu dang sap xep theo column name
-			if (s_sortColum.equals("name") == true) {
-				// vi la dang sap xep theo column name nen bien
-				// isOrderById set to false
-				model.addAttribute("isOrderById", false);
-			} else {
-				// Neu khong, nghia la no dang sap xep theo ID
-				model.addAttribute("isOrderById", true);
-			}
-			
-			if (s_sortOrder.equals("ASC") == true) {
-				// Truong hop nay la dang sap xep tang dan
-				model.addAttribute("isOrderAsc", true);
-			} else {
-				model.addAttribute("isOrderAsc", false);
-			}
+			model.addAttribute("mOrderBy", s_sortColum);
+			model.addAttribute("mOrder", s_sortOrder);
 		}
 		System.out.println("OrderBy : " + dbOrderBy);
 		
@@ -135,21 +117,13 @@ public class CategoryController {
 			session.setAttribute(S_SORT_COLUMN, "id");
 			session.setAttribute(S_SORT_ORDER, "ASC");
 			
-			model.addAttribute("isOrderById", true);
-			model.addAttribute("isOrderAsc", true);
+			model.addAttribute("mOrderBy", "id");
+			model.addAttribute("mOrder", "ASC");
 		}else {
 			dbOrderBy = s_sortColum + " " + s_sortOrder;
-			if (s_sortColum.equals("name") == true) {
-				model.addAttribute("isOrderById", false);
-			} else {
-				model.addAttribute("isOrderById", true);
-			}
 			
-			if (s_sortOrder.equals("ASC") == true) {
-				model.addAttribute("isOrderAsc", true);
-			} else {
-				model.addAttribute("isOrderAsc", false);
-			}
+			model.addAttribute("mOrderBy", s_sortColum);
+			model.addAttribute("mOrder", s_sortOrder);
 		}
 		System.out.println("OrderBy : " + dbOrderBy);
 		
@@ -259,23 +233,17 @@ public class CategoryController {
 			Model model, HttpServletRequest request, HttpSession session){
 		System.out.println("[DBG] CategorySortID called");
 		
-		// Co 2 bien Session, name S_SORT_COLUMN the hien dang sap xep theo cot nao,
-		// S_SORT_ORDER the hien dang sap xep theo Order nao
-		
 		session.setAttribute(S_SORT_COLUMN, "id");
 		String sortOrder = (String) session.getAttribute(S_SORT_ORDER);
 		if (sortOrder == null) {
-			// Check if session sort order exist or not, this is not exist, default to ASC
 			session.setAttribute(S_SORT_ORDER, "ASC");
 		}else {
 			if( sortOrder.equals("ASC")== true) {
-				// Neu dang la ASC thi set bien session to DESC (giam dan) 
 				session.setAttribute(S_SORT_ORDER, "DESC");
 			}else {
 				session.setAttribute(S_SORT_ORDER, "ASC");
 			}
 		}
-		
 		// Bay gio chuyen sang search controller voi nhung gia tri minh luu vao session roi
 		return "redirect:/categorylist";
 	}
@@ -285,27 +253,17 @@ public class CategoryController {
 			Model model, HttpServletRequest request, HttpSession session){
 		System.out.println("[DBG] CategorySortID called");
 		
-		// Co 2 bien Session, name S_SORT_COLUMN the hien dang sap xep theo cot nao,
-		// S_SORT_ORDER the hien dang sap xep theo Order nao
-		
-		// O day, vi user click vao Category Name, nen action nay phai set sap xep theo column name
 		session.setAttribute(S_SORT_COLUMN, "name");
-		
-		// Ve sort order, phai lay ra cai order hien tai tu session
 		String sortOrder = (String) session.getAttribute(S_SORT_ORDER);
 		if (sortOrder == null) {
-			// Neu chua co trong session, luu gia tri ban dau la tang dan ASC
 			session.setAttribute(S_SORT_ORDER, "ASC");
 		}else {
-			// Neu co roi, ta phai xet nguoc lai
 			if( sortOrder.equals("ASC")== true) {
 				session.setAttribute(S_SORT_ORDER, "DESC");
 			}else {
 				session.setAttribute(S_SORT_ORDER, "ASC");
 			}
 		}
-		
-		
 		return "redirect:/categorylist";
 	}
 }

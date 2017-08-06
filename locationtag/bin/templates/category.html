@@ -75,23 +75,41 @@
 	       
 	       <th>
 	       <a th:href="@{/categorylist/sortid}">Category ID
-	       		<span th:if='${ isOrderById}'>
-		       		<span th:if='${isOrderAsc}'>
-		       			<span class="glyphicon glyphicon-sort-by-attributes"></span>
-		       		</span>
-		       		<span th:if='${ not isOrderAsc}'>
-		       			<span class="glyphicon glyphicon-sort-by-attributes-alt"></span>
-		       		</span>
+	       		<span th:switch='${ mOrderBy}'>
+<!-- 	       		case is already sorted by id, display up or down icon -->
+	       			<span th:case="'id'">
+	       				<span th:switch='${ mOrder}'>
+			       			<span th:case="'ASC'">
+			       				<span class="glyphicon glyphicon-sort-by-attributes"></span>
+			       			</span>
+			       			<span th:case="'DESC'">
+			       				<span class="glyphicon glyphicon-sort-by-attributes-alt"></span>
+			       			</span>
+			       		</span>
+	       			</span>
+<!-- 	       			case name which is not id, display 2 direction icon -->
+	       			<span th:case="'name'">
+	       				<span class="glyphicon glyphicon-sort"></span>
+	       			</span>
 	       		</span>
+	       		
 	       </a></th>
 	       <th><a th:href="@{/categorylist/sortname}">Category Name
-	       		<span th:if='${not isOrderById }'>
-		       		<span th:if='${isOrderAsc}'>
-		       			<span class="glyphicon glyphicon-sort-by-attributes"></span>
-		       		</span>
-		       		<span th:if='${ not isOrderAsc}'>
-		       			<span class="glyphicon glyphicon-sort-by-attributes-alt"></span>
-		       		</span>
+	       		<span th:switch='${ mOrderBy}'>
+	       			<span th:case="'name'">
+	       				<span th:switch='${ mOrder}'>
+			       			<span th:case="'ASC'">
+			       				<span class="glyphicon glyphicon-sort-by-attributes"></span>
+			       			</span>
+			       			<span th:case="'DESC'">
+			       				<span class="glyphicon glyphicon-sort-by-attributes-alt"></span>
+			       			</span>
+			       		</span>
+	       			</span>
+	       			
+	       			<span th:case="'id'">
+	       				<span class="glyphicon glyphicon-sort"></span>
+	       			</span>
 	       		</span>
 	       </a></th>
 	       
