@@ -1,5 +1,6 @@
 package summer.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import summer.db.entity.Mcategory;
 import summer.formmodel.CategoryCreateForm;
@@ -37,12 +39,11 @@ public class CategoryController {
 	
 	@Autowired
 	private ICategoryService categoryService;
-	
 	@GetMapping("/categorylist")
 	public String CategoryList(@ModelAttribute("categorydata") CategorySearchForm searchData,
-			Model model, HttpServletRequest request, HttpSession session,
-			@PageableDefault(size  = PageWrapper.MAX_PAGE_ITEM_DISPLAY, page = 0)Pageable pageable){
+			Model model, HttpServletRequest request, HttpSession session){
 		System.out.println("[DBG] CategoryList called");
+		List<Mcategory> cates = new ArrayList<Mcategory>();
 
 		String dbOrderBy = "";
 		
@@ -74,26 +75,29 @@ public class CategoryController {
 			searchData.setSearchName(s_searchName);
 			
 			if (s_searchId.equals("")&& s_searchName.equals("")) {
-				List<Mcategory> cates = categoryService.getAllCategoryNotDeleted(dbOrderBy);
-				model.addAttribute("categorydatalist", cates);
+				 cates = categoryService.getAllCategoryNotDeleted(dbOrderBy);
 			}else if(s_searchId.equals("") == false && s_searchName.equals("") == true) {
 				// ID not empty, nameis empty
-				List<Mcategory> cates = categoryService.getAllCategoryByID(s_searchId, dbOrderBy);
-				model.addAttribute("categorydatalist", cates);
+				 cates = categoryService.getAllCategoryByID(s_searchId, dbOrderBy);
 			} else if(s_searchId.equals("") == true && s_searchName.equals("") == false) {
 				// Name not empty, ID is  empty
-				List<Mcategory> cates = categoryService.getAllCategoryByName(s_searchName, dbOrderBy);
-				model.addAttribute("categorydatalist", cates);
+				 cates = categoryService.getAllCategoryByName(s_searchName, dbOrderBy);
 			} else if(s_searchId.equals("") == false && s_searchName.equals("") == false) {
-				List<Mcategory> cates = categoryService.getAllCategoryByNameAndId(s_searchId, s_searchName, dbOrderBy);
-				model.addAttribute("categorydatalist", cates);
+				 cates = categoryService.getAllCategoryByNameAndId(s_searchId, s_searchName, dbOrderBy);
 			}
 			
 		}else {
-			List<Mcategory> cates = categoryService.getAllCategoryNotDeleted(dbOrderBy);
-			// We not use this because now use Page
+			 cates = categoryService.getAllCategoryNotDeleted(dbOrderBy);
+		}
+		if (cates.size() >5000) {
+			model.addAttribute("errorSearch", "Size too much");
+		} else if (cates.isEmpty()) {
+			model.addAttribute("errorSearch", "Not found");
+		} else {
+			// search OK, no error
 			model.addAttribute("categorydatalist", cates);
 		}
+		
 		
 //		We do the Conversion to Page display
 //		Pageable newPage = new PageRequest(pageable.getPageNumber(), 3);
@@ -155,17 +159,26 @@ public class CategoryController {
 	
 	@PostMapping(path="/categorylist", params= {"delete"})
 	public String CategoryDelete(@ModelAttribute("categorydata") CategorySearchForm searchData,
-			Model model, HttpServletRequest request, HttpSession sesstion){
+			Model model, HttpServletRequest request, HttpSession sesstion,
+			RedirectAttributes redirectAttributes){
+		// 1. Chu y ta can phai add them RedirectAttributes nhu tren
 		System.out.println("[DBG] CategoryDelete called");
 		System.out.println("[DBG] searchData: " + searchData.getDeleteList());
+		
+		if (searchData.getDeleteList()== null || searchData.getDeleteList().isEmpty()) {
+			model.addAttribute("errorDelete", "Please check the item ");
+			// 2. Truyen message bang redirect
+			redirectAttributes.addFlashAttribute("errorDelete", "Please check the item ");
+		}else {
 
-		for (String categoryID : searchData.getDeleteList()) {
-			// Call Service function to Update delete_flag for categoryID
-			categoryService.updateDeleteFlag(categoryID);
+			for (String categoryID : searchData.getDeleteList()) {
+				// Call Service function to Update delete_flag for categoryID
+				categoryService.updateDeleteFlag(categoryID);
+			}
+			model.addAttribute("infomessage", "Deleted item " + searchData.getDeleteList().size());
+			// Chuyen den action categorylist de no reload lai cac Row cho minh
 		}
-		model.addAttribute("infomessage", "Deleted item " + searchData.getDeleteList().size());
-		// Chuyen den action categorylist de no reload lai cac Row cho minh
-		return "category";
+		return "redirect:/categorylist";
 	}
 	
 	

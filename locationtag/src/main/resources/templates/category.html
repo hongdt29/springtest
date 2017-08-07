@@ -46,9 +46,10 @@
           <div class="col-xs-3 col-sm-3 col-md-3">
               <input type="submit" class="btn btn-lg btn-primary btn-block" 
               name="search" id="search" value="Search"/>
+              <span class="text-danger text-center" th:text="${errorSearch}"></span>
           </div>
       </div>
-   
+   	
    <br/>
 	<div>
 	
@@ -56,7 +57,7 @@
 	    <input type="submit" class="btn btn-lg btn-primary btn-block" 
 	    name="delete" id="delete" value="Delete" onclick="return confirm('Are you sure you want to delete this item?');"/>
 	</div>
-	
+	 <span class="text-danger text-center" th:text="${errorDelete}"></span>
 	
 	
 	<!-- 	     Code nay dung de khi user Click new, open Controller action ten GoodsCreateNew.html -->
