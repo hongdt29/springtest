@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+	<title>Spring Security Example </title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link rel="stylesheet" type="text/css"
+	href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
+	
+	<style>
+	th, td {
+		padding: 5px;
+	}
+	</style>
+<script type="text/javascript">
+   function popup(url, w, h) {
+      // open your window here
+      //window.open("/categorylist/create", 'height=200,width=150');
+      newwindow=window.open(url,'name','height=250,width=500');
+      if (window.focus) {
+   	  newwindow.focus()
+       }
+      return false;
+   }
+
+</script>
+</head>
+<body>
+
+<div class="container">
+
+<!-- Form Search -->
+<form th:action="@{/goodslist}" th:object="${goodsform}" method="post">
+      
+   <div class="form-group blu-margin">
+	    <select th:field="*{categoryId}">
+		  <option th:each="cate : ${dropCategory}" 
+		          th:value="${cate.id}" 
+		          th:text="${cate.name}">Dropdown</option>
+		</select>
+	</div>
+	
+	<div class="row">
+        <div class="col-xs-3 col-sm-3 col-md-3">
+            <input type="submit" class="btn btn-lg btn-primary btn-block" 
+            name="search" id="search" value="Submit"/>
+        </div>
+    </div>
+   
+   
+   <table style = "border: 1px solid black">
+	   <thead>
+	     <tr>
+	       <th>#</th>
+	       
+	       <th>
+	       <a th:href="@{/categorylist/sortid}">Goods ID
+	       		<span th:switch='${ mOrderBy}'>
+<!-- 	       		case is already sorted by id, display up or down icon -->
+	       			<span th:case="'id'">
+	       				<span th:switch='${ mOrder}'>
+			       			<span th:case="'ASC'">
+			       				<span class="glyphicon glyphicon-sort-by-attributes"></span>
+			       			</span>
+			       			<span th:case="'DESC'">
+			       				<span class="glyphicon glyphicon-sort-by-attributes-alt"></span>
+			       			</span>
+			       		</span>
+	       			</span>
+	       			<span th:case="'name'">
+	       				<span class="glyphicon glyphicon-sort"></span>
+	       			</span>
+	       		</span>
+	       		
+	       </a></th>
+	       <th><a th:href="@{/categorylist/sortname}">Goods Name
+	       		<span th:switch='${ mOrderBy}'>
+	       			<span th:case="'name'">
+	       				<span th:switch='${ mOrder}'>
+			       			<span th:case="'ASC'">
+			       				<span class="glyphicon glyphicon-sort-by-attributes"></span>
+			       			</span>
+			       			<span th:case="'DESC'">
+			       				<span class="glyphicon glyphicon-sort-by-attributes-alt"></span>
+			       			</span>
+			       		</span>
+	       			</span>
+	       			
+	       			<span th:case="'id'">
+	       				<span class="glyphicon glyphicon-sort"></span>
+	       			</span>
+	       		</span>
+	       </a></th>
+	       <th>Category Name</th>
+	       <th>Company Name</th>
+	       <th>Remark</th>
+	       <th>Tag ID</th>
+	       <th>Floor</th>
+	       <th>Map</th>
+	       <th><input type="checkbox" name="select-all" id="select-all" /> Toggle All</th>
+	     </tr>
+	   </thead>
+	   <tbody>
+	     <tr th:each="row,iterStat : ${goodslist}">
+	       <td th:text="${iterStat.count} + 1">#</td>
+	       <td>
+		       <a th:onclick="'javascript:popup(\'/categorylist/update?id='+ ${row.id} +'\', \'500\', \'250\')'" >
+       			<span th:text="${{row.id}}" >#</span></a>
+	       </td>
+	       <td th:text="${{row.name}}">#</td>
+	       <td th:text="${{row.categoryname}}">#</td>
+	       <td th:text="${{row.companyname}}">#</td>
+	       <td th:text="${{row.remark}}">#</td>
+	       <td th:text="${{row.idtag}}">#</td>
+	       <td th:text="${{row.floorname}}">#</td>
+	       <td>#</td>
+	       <td><input type="checkbox" th:field="*{deleteList}" th:value="${{row.id}}"/></td>
+	     </tr>
+	   </tbody>
+	 </table>
+</form>
+</div>
+
+</body>
+</html>

@@ -67,7 +67,7 @@ public class LoginController {
 				Date currentDate = new Date();
 				muser.setLastlogindatetime(currentDate);
 				loginService.updateLastLoginDateTime(muser);
-				return "redirect:/categorylist";
+				return "redirect:/goodslist";
 			}else {
 				return "login";
 			}
@@ -111,7 +111,7 @@ public class LoginController {
 			mUser.setLastlogindatetime(currentDate);
 			loginService.updateLastLoginDateTime(mUser);
 			
-			return "redirect:/categorylist";
+			return "redirect:/goodslist";
 			
 		}else {
 			bindingResult.rejectValue("NotFoundInDB", " ", "User not found");

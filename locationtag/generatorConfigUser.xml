@@ -17,6 +17,15 @@
 	   </table>
 	   <table schema="locationtag" tableName="MCategory">
 	   </table>
+	   
+	   <table schema="locationtag" tableName="tgoods">
+	   </table>
+	   <table schema="locationtag" tableName="mtag">
+	   </table>
+	   <table schema="locationtag" tableName="mfloor">
+	   </table>
+	   <table schema="locationtag" tableName="mcompany">
+	   </table>
 
   </context>
 </generatorConfiguration>

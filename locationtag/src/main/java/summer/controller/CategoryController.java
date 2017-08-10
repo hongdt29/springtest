@@ -199,15 +199,20 @@ public class CategoryController {
 	
 		/* O day ID cua new Category se khong co, ta phai tu tao moi hoac set AutoIncrement, need Help */
 		// Tam thoi tu tao moi
-		String randomID = UUID.randomUUID().toString().subSequence(0, 13).toString();
-		
+		//String randomID = UUID.randomUUID().toString().subSequence(0, 13).toString();
+		String randomID = "00001";
 		Mcategory cate = new Mcategory();
 		cate.setDeleteFlag(false);
 		cate.setId(randomID);
 		cate.setName(categorynewdata.getName());
 	
-		categoryService.insertCategory(cate);
-	
+		try {
+			categoryService.insertCategory(cate);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			// Xu ly error here
+			model.addAttribute("errorMsg", "Content Message");
+		}
 		return "redirect:/categorylist";
 	}
 
