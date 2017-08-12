@@ -5,14 +5,19 @@
 	<title>Spring Security Example </title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<link rel="stylesheet" type="text/css"
-	href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
-	
+		href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<style>
 	th, td {
 		padding: 5px;
 	}
 	</style>
-<script type="text/javascript">
+<script type="text/javascript">//<![CDATA[
+	$(document).ready(function(){
+	    $('#confirmDelDialog').modal('show');
+	});
+
    function popup(url, w, h) {
       // open your window here
       //window.open("/categorylist/create", 'height=200,width=150');
@@ -23,6 +28,39 @@
       return false;
    }
 
+   function allChecked(frm) {
+	   for (var i = 0; i < frm.deleteList.length; i++) {
+		   frm.deleteList[i].checked = frm.allcheck.checked;
+	   }
+   }
+   
+   function DisChecked(frm) {
+	   for (var i = 0; i < frm.deleteList.length; i++) {
+		   if (frm.deleteList[i].checked == false) {
+			   frm.allcheck.checked = false;
+			   return;
+		   }
+	   }
+	   frm.allcheck.checked = true;
+   }
+   
+   function submitDel()
+   {
+	   $("<input/>").attr("name", "btnDelete").
+		 	val($("#currentOrderLogic").val()).
+		 	appendTo("#frmGoods");
+	   $("#force").val("no");
+	   $("#frmGoods").submit();
+   }
+   function submitDelContinue()
+   {
+	   $("<input/>").attr("name", "btnDelete").
+		 	val($("#currentOrderLogic").val()).
+		 	appendTo("#frmGoods");
+	   $("#force").val("yes");
+	   $("#frmGoods").submit();
+   }
+ //]]>
 </script>
 </head>
 <body>
@@ -30,24 +68,88 @@
 <div class="container">
 
 <!-- Form Search -->
-<form th:action="@{/goodslist}" th:object="${goodsform}" method="post">
-      
-   <div class="form-group blu-margin">
-	    <select th:field="*{categoryId}">
-		  <option th:each="cate : ${dropCategory}" 
-		          th:value="${cate.id}" 
-		          th:text="${cate.name}">Dropdown</option>
-		</select>
-	</div>
+<form th:action="@{/goodslist}" th:object="${goodsform}" method="post" id="frmGoods">
+	<input type="hidden" th:value="${orderAttr}" id="currentOrderLogic"/>
+	<input type="hidden" value="no" id="force" name="force"/>
+	<input type="hidden" value="no" id="continue" name="continue"/>
 	
-	<div class="row">
-        <div class="col-xs-3 col-sm-3 col-md-3">
-            <input type="submit" class="btn btn-lg btn-primary btn-block" 
-            name="search" id="search" value="Submit"/>
-        </div>
-    </div>
+	<div class="panel panel-default grid">
+		<div class="row panel-body">
+			<div class="col-sm-4">
+			<label>Floor Name:</label>
+			<select class="form-control" th:field="*{floorId}">
+			  	<option th:each="floor : ${dropFloor}" 
+			          th:value="${floor.id}" 
+			          th:text="${floor.name}">Floor
+			    </option>
+			</select>
+			</div>
+		</div>
+		
+		<div class="row panel-body">
+			<div class=" col-sm-4">
+			<label>Goods ID:</label>
+		    <input type="text" th:field="*{id}" 
+		        class="form-control"/>
+  			</div>
+  			
+  			<div class="col-sm-4">
+		    <label>Goods Name:</label>
+		    <input type="text" th:field="*{name}"   
+	      		class="form-control" /> 	
+	      	</div>
+	      	
+	      	<div class="col-sm-4">
+	      	<label>Category Name:</label>
+		    <select class="form-control" th:field="*{categoryId}">
+			  <option th:each="cate : ${dropCategory}" 
+			          th:value="${cate.id}" 
+			          th:text="${cate.name}">Dropdown</option>
+			</select>
+			</div>
+		</div>
+		<div class="row panel-body">
+			<div class=" col-sm-4">
+			<label>Tag ID:</label>
+		    <input type="text" th:field="*{tagId}"   
+	      		class="form-control" />
+			</div>
+			
+			<div class="col-sm-4">
+			<label>Company:</label>
+		    <select class="form-control" th:field="*{companyId}">
+			  <option th:each="com : ${dropCompany}" 
+			          th:value="${com.id}" 
+			          th:text="${com.name}">Company</option>
+			</select>
+			</div>
+			
+			<div class=" col-sm-4">
+			<label>Remark:</label>
+		    <input type="text" th:field="*{remark}"   
+	      		class="form-control" />
+	      	</div>
+		</div>
+	</div> 
    
+      <div class="row">
+          <div class="col-sm-3">
+              <input type="submit" class="btn btn-lg btn-primary btn-block" 
+              name="btnSearch" id="btnSearch" value="Search"/>
+              <span class="text-danger text-center" th:text="${errorSearch}"></span>
+          </div>
+          
+          <div class="col-sm-3">
+              <button type="button" class="btn btn-lg btn-primary btn-block" 
+              		name="btnDelete" onclick="submitDel()">
+              Delete
+              </button>
+              <span class="text-danger text-center" th:text="${errorDelete}"></span>
+          </div>
+      </div>
+	
    
+   <br/><br/>
    <table style = "border: 1px solid black">
 	   <thead>
 	     <tr>
@@ -97,7 +199,8 @@
 	       <th>Tag ID</th>
 	       <th>Floor</th>
 	       <th>Map</th>
-	       <th><input type="checkbox" name="select-all" id="select-all" /> Toggle All</th>
+	       <th><input type="checkbox" name="allcheck" id="allcheck" 
+	       	onclick="allChecked(this.form)"/> Toggle All</th>
 	     </tr>
 	   </thead>
 	   <tbody>
@@ -114,10 +217,31 @@
 	       <td th:text="${{row.idtag}}">#</td>
 	       <td th:text="${{row.floorname}}">#</td>
 	       <td>#</td>
-	       <td><input type="checkbox" th:field="*{deleteList}" th:value="${{row.id}}"/></td>
+	       <td><input type="checkbox" th:field="*{deleteList}" th:value="${{row.id}}"
+	       		onclick="DisChecked(this.form)"/></td>
 	     </tr>
 	   </tbody>
 	 </table>
+	 
+	<div class="modal fade" id="confirmDelDialog" th:if="${confirmDelMsg != null}">
+      <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal">&times;</button>
+	        <h4 class="modal-title">Message</h4>
+	      </div>
+	      <div class="modal-body">
+	        <p th:text="${confirmDelMsg}"></p>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal" 
+	        	onclick="submitDelContinue()">Yes</button>
+	        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	
 </form>
 </div>
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
 <generatorConfiguration>
-<classPathEntry location="C:\\Users\\pinku\\.gradle\\caches\\modules-2\\files-2.1\\mysql\\mysql-connector-java\\5.1.4\\a60e0a6de16ad99bcd1aa954034b825ddc0b5ebf\\mysql-connector-java-5.1.4.jar" />
+<classPathEntry location="D:\\Programing Language\\_ForPinku\\JavaEE\\SpringExtra\\mysql-connector-java-5.1.42.jar" />
   <context id="context1">
   <!-- 	   schema la DB name, tableName la table -->
     <jdbcConnection connectionURL="jdbc:mysql://localhost:3306/locationtag" 
@@ -10,8 +10,6 @@
 	   <javaModelGenerator targetPackage="summer.db.entity" targetProject="locationtag" />
 	   <sqlMapGenerator targetPackage="mappers" targetProject="locationtag" />
 	   <javaClientGenerator targetPackage="summer.db.client" targetProject="locationtag" type="XMLMAPPER" />
-	   
-	   
 	   
 	   <table schema="locationtag" tableName="muser">
 	   </table>

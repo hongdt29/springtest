@@ -8,7 +8,8 @@ public class CompositeTGoods {
    private String idtag;
    private String idcompany;
    private String idcategory;
-   
+   private Boolean deleteFlag;
+
    private String floorname;
    private String categoryname;
    private String companyname;
@@ -24,7 +25,15 @@ public class CompositeTGoods {
 	   floorname = "%";
 	   categoryname = "%";
 	   companyname = "%";
+	   deleteFlag = false;
    }
+   
+   	public Boolean getDeleteFlag() {
+		return deleteFlag;
+	}
+	public void setDeleteFlag(Boolean deleteFlag) {
+		this.deleteFlag = deleteFlag;
+	}
 	public String getId() {
 		return id;
 	}

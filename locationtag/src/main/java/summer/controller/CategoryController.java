@@ -202,7 +202,7 @@ public class CategoryController {
 		//String randomID = UUID.randomUUID().toString().subSequence(0, 13).toString();
 		String randomID = "00001";
 		Mcategory cate = new Mcategory();
-		cate.setDeleteFlag(false);
+		cate.setDeleteflag(false);
 		cate.setId(randomID);
 		cate.setName(categorynewdata.getName());
 	
@@ -239,7 +239,7 @@ public class CategoryController {
 		Mcategory cate = new Mcategory();
 		cate.setId(categoryeditdata.getId());
 		cate.setName(categoryeditdata.getName());
-		cate.setDeleteFlag(false);
+		cate.setDeleteflag(false);
 		
 		categoryService.updateCategoryByID(cate);
 	

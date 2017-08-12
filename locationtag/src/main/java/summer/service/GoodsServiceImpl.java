@@ -21,6 +21,11 @@ public class GoodsServiceImpl implements IGoodsService {
 	public List<CompositeTGoods> getAllGoods(CompositeTGoods condition) {
 		return mapperGoods.getAllGoods(condition);
 	}
+
+	@Override
+	public int updateDeleteFlagToTrueByID(String id) {
+		return mapperGoods.updateDeleteFlagToTrueByID(id);
+	}
 	
 
 }

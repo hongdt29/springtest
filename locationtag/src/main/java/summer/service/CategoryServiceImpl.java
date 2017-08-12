@@ -18,7 +18,7 @@ public class CategoryServiceImpl implements ICategoryService{
 	@Override
 	public List<Mcategory> getAllCategoryNotDeleted(String orderBy) {
 		McategoryExample query = new McategoryExample();
-		query.createCriteria().andDeleteFlagNotEqualTo(true);
+		query.createCriteria().andDeleteflagNotEqualTo(true);
 		//set order by clause to all 
 		query.setOrderByClause(orderBy);
 		//query.setOrderByClause("id DESC");
@@ -30,7 +30,7 @@ public class CategoryServiceImpl implements ICategoryService{
 	@Override
 	public List<Mcategory> getAllCategoryByID(String Id, String orderBy) {
 		McategoryExample query = new McategoryExample();
-		query.createCriteria().andIdLike("%" + Id + "%").andDeleteFlagNotEqualTo(true);
+		query.createCriteria().andIdLike("%" + Id + "%").andDeleteflagNotEqualTo(true);
 		query.setOrderByClause(orderBy);
 		
 		List<Mcategory> category = categoryMapper.selectByExample(query);
@@ -41,7 +41,7 @@ public class CategoryServiceImpl implements ICategoryService{
 	@Override
 	public List<Mcategory> getAllCategoryByName(String name, String orderBy) {
 		McategoryExample query = new McategoryExample();
-		query.createCriteria().andNameLike("%" + name + "%").andDeleteFlagNotEqualTo(true);
+		query.createCriteria().andNameLike("%" + name + "%").andDeleteflagNotEqualTo(true);
 		query.setOrderByClause(orderBy);
 		//andNameEqualTo(name)   -> andNameLike("%" + name + "%")
 		List<Mcategory> category = categoryMapper.selectByExample(query);
@@ -52,7 +52,8 @@ public class CategoryServiceImpl implements ICategoryService{
 	@Override
 	public List<Mcategory> getAllCategoryByNameAndId(String ID, String name, String orderBy) {
 		McategoryExample query = new McategoryExample();
-		query.createCriteria().andIdLike("%" + ID + "%").andNameLike("%" + name + "%").andDeleteFlagNotEqualTo(true);
+		query.createCriteria().andIdLike("%" + ID + "%").andNameLike("%" + name + "%").
+		andDeleteflagNotEqualTo(true);
 		query.setOrderByClause(orderBy);
 		
 		List<Mcategory> category = categoryMapper.selectByExample(query);
@@ -70,7 +71,7 @@ public class CategoryServiceImpl implements ICategoryService{
 			// O day nghia la da tim duoc it nhat 1 row, set Delete Flag to true
 			Mcategory currentRow = category.get(0);
 			// int version = currentRow.getVersion();
-			currentRow.setDeleteFlag(true);
+			currentRow.setDeleteflag(true);
 			
 			// Now update DB
 			categoryMapper.updateByExample(currentRow, query);

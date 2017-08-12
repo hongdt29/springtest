@@ -7,4 +7,6 @@ import summer.db.entity.Mcategory;
 
 public interface IGoodsService {
 	public List<CompositeTGoods> getAllGoods(CompositeTGoods condition);
+	
+	public int updateDeleteFlagToTrueByID(String id);
 }
