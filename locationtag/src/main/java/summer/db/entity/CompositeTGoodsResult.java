@@ -3,43 +3,34 @@ package summer.db.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CompositeTGoods {
+public class CompositeTGoodsResult {
    private String id;
    private String name;
    private String remark;
-   private List<String> idfloor;
+   private String idfloor;
    private String idtag;
-   private List<String> idcompany;
-   private List<String> idcategory;
+   private String idcompany;
+   private String idcategory;
    private Boolean deleteFlag;
 
    private String floorname;
    private String categoryname;
    private String companyname;
    
-   private String orderBy;
-   
-   public CompositeTGoods() {
+   public CompositeTGoodsResult() {
 	   id = "%";
 	   name = "%";
 	   remark = "%";
-	   idfloor = new ArrayList<>();
+	   idfloor = "%";
 	   idtag = "%";
-	   idcompany = new ArrayList<>();
-	   idcategory = new ArrayList<>();
+	   idcompany = "%";
+	   idcategory = "%";
 	   floorname = "%";
 	   categoryname = "%";
 	   companyname = "%";
 	   deleteFlag = false;
-	   orderBy = "name DESC";
    }
-   	public String getOrderBy() {
-	return orderBy;
-	}
-	
-	public void setOrderBy(String orderBy) {
-		this.orderBy = orderBy;
-	}
+   
    	public Boolean getDeleteFlag() {
 		return deleteFlag;
 	}
@@ -72,27 +63,28 @@ public class CompositeTGoods {
 		this.idtag = idtag;
 	}
 
-	public List<String> getIdfloor() {
+
+	public String getIdfloor() {
 		return idfloor;
 	}
 
-	public void setIdfloor(List<String> idfloor) {
+	public void setIdfloor(String idfloor) {
 		this.idfloor = idfloor;
 	}
 
-	public List<String> getIdcompany() {
+	public String getIdcompany() {
 		return idcompany;
 	}
 
-	public void setIdcompany(List<String> idcompany) {
+	public void setIdcompany(String idcompany) {
 		this.idcompany = idcompany;
 	}
 
-	public List<String> getIdcategory() {
+	public String getIdcategory() {
 		return idcategory;
 	}
 
-	public void setIdcategory(List<String> idcategory) {
+	public void setIdcategory(String idcategory) {
 		this.idcategory = idcategory;
 	}
 

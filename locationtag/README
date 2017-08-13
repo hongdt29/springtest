@@ -1,22 +1,24 @@
 De cho Hien thi Goods, cac update can thiet
 1. Dau tien, van phai generate tat cac cac Mapper cho cac Table lien quan va Goods
-2. Ta tao them class summer.db.entity.CompositeTGoods the hien cac data se hien thi tren View.
+2. Ta tao them class summer.db.entity.CompositeTGoodsResult the hien cac data se hien thi tren View.
 Cac truong cua class nay gom nhieu truong tu nhieu table.
-Chu y class nay cung lam viec nhu ..Example class ta dung de query. Gia tri la % nghia la search all.
+
+Class class summer.db.entity.CompositeTGoods la dung se set cac query value nhu Example class ta dung de query. Gia tri la % nghia la search all.
 
 2. Sau do, o file TGoodsMapper.xml, Can add them 1 so Code vao phia cuoi cung cua FIle.
-    2.1 add them 1 cai resultMap the hien ket qua tra lai: resultCompositeTGoods, no chinh la class summer.db.entity.CompositeTGoods
+    2.1 add them 1 cai resultMap the hien ket qua tra lai: resultCompositeTGoods, no chinh la class summer.db.entity.CompositeTGoodsResult
 		Vi ket qua tra lai khong phai chi la 1 table, gom nhieu truong trong cac table nen phai lam cai nay
 	2.2 Viet them 2 ham Custom cho viec search la getAllGoods va updateDeleteFlagToTrueByID.
 		Ham getAllGoods thi search tat ca su dung Join trong SQL (search them google).
 		Ham updateDeleteFlagToTrueByID thi set truong Flag to true
 3. Trong file TGoodsMapper.java, ta cung phai add them 2 ham vao phia cuoi cung voi Ten giong nhu file xml
 getAllGoods updateDeleteFlagToTrueByID
+
 4. The la xong mapper, xong ta add them 1 so Service de su dung cac ham Mapper nay.
 Service cua Floor, Company... la dung de hien thi data cho Dropdown list
 Service cua Goods thi cho viec search Goods 
 
-5. Kiem tra Controller code va html code. Dai khai se giong cai Category. Nho co day du jquery ... nhu file Category
+5. Add code file COntroller nhu Controller code html code. Dai khai se giong cai Category. Nho co day du jquery ... nhu file Category
 
 6. Vi du 1 doan code Dropdown list trong html
 
@@ -33,8 +35,6 @@ Service cua Goods thi cho viec search Goods
 	th:text="${cate.name}": chinh la gia tri duoc hien thi len tren Web.
 			
 			
-
-
 
 De search name COntains
 

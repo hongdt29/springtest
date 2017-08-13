@@ -6,16 +6,34 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<link rel="stylesheet" type="text/css"
 		href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<link rel="stylesheet" type="text/css" 
+		href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/smoothness/jquery-ui.css"/>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+	<script type="text/javascript" src="/js/ui.dropdownchecklist-1.5-min.js"></script>
 	<style>
 	th, td {
 		padding: 5px;
 	}
 	</style>
+
+<!-- Add code nay vao trong script -->
 <script type="text/javascript">//<![CDATA[
+	
+	// Ham init, chuan bi confirm dialog va cac dropdown list
 	$(document).ready(function(){
 	    $('#confirmDelDialog').modal('show');
+	    
+	    $("#dcl").dropdownchecklist({firstItemChecksAll: true, maxDropHeight: 100,
+	    	width:150});
+	    $("#dcl2").dropdownchecklist({firstItemChecksAll: true, maxDropHeight: 100,
+	    	width:150});
+	    $("#dcl3").dropdownchecklist({firstItemChecksAll: true, maxDropHeight: 100,
+	    	width:150});
 	});
 
    function popup(url, w, h) {
@@ -28,12 +46,14 @@
       return false;
    }
 
+   // Ham de check all checkbox
    function allChecked(frm) {
 	   for (var i = 0; i < frm.deleteList.length; i++) {
 		   frm.deleteList[i].checked = frm.allcheck.checked;
 	   }
    }
    
+   // Ham dung de khi 1 children check box check, thay doi check-all
    function DisChecked(frm) {
 	   for (var i = 0; i < frm.deleteList.length; i++) {
 		   if (frm.deleteList[i].checked == false) {
@@ -44,19 +64,24 @@
 	   frm.allcheck.checked = true;
    }
    
+   // Ham nay khi user click nut Delete
    function submitDel()
    {
+	   // Add them 1 parameter btnDelete de ben trong file controller,
+	   //  @PostMapping(value="/goodslist", params="btnDelete") is valid
 	   $("<input/>").attr("name", "btnDelete").
-		 	val($("#currentOrderLogic").val()).
+		 	val("").
 		 	appendTo("#frmGoods");
+	   // Add bien force lan dau tien la no de co the hien thi confirmation delete message
 	   $("#force").val("no");
 	   $("#frmGoods").submit();
    }
    function submitDelContinue()
    {
 	   $("<input/>").attr("name", "btnDelete").
-		 	val($("#currentOrderLogic").val()).
+	   		val("").
 		 	appendTo("#frmGoods");
+		// Day la user da confirm delete OK, do do add force to yes
 	   $("#force").val("yes");
 	   $("#frmGoods").submit();
    }
@@ -69,80 +94,106 @@
 
 <!-- Form Search -->
 <form th:action="@{/goodslist}" th:object="${goodsform}" method="post" id="frmGoods">
-	<input type="hidden" th:value="${orderAttr}" id="currentOrderLogic"/>
 	<input type="hidden" value="no" id="force" name="force"/>
 	<input type="hidden" value="no" id="continue" name="continue"/>
 	
 	<div class="panel panel-default grid">
 		<div class="row panel-body">
 			<div class="col-sm-4">
+			
+			<!-- >>>>>> Copy doan code nay cho tuong ung nhu html -->
 			<label>Floor Name:</label>
-			<select class="form-control" th:field="*{floorId}">
+			<select class="form-control" th:field="*{floorId}" multiple="multiple" 
+				id="dcl" name="dclSearchFloor">
 			  	<option th:each="floor : ${dropFloor}" 
 			          th:value="${floor.id}" 
 			          th:text="${floor.name}">Floor
 			    </option>
 			</select>
+			<!-- <<<<< Copy doan code nay cho tuong ung nhu html -->
+			
 			</div>
 		</div>
 		
 		<div class="row panel-body">
 			<div class=" col-sm-4">
+			
+			<!-- >>>>>> Copy doan code nay cho tuong ung nhu html -->
 			<label>Goods ID:</label>
 		    <input type="text" th:field="*{id}" 
 		        class="form-control"/>
+  			<!-- <<<<< Copy doan code nay cho tuong ung nhu html -->
   			</div>
-  			
   			<div class="col-sm-4">
+  			
+  			<!-- >>>>>> Copy doan code nay cho tuong ung nhu html -->
 		    <label>Goods Name:</label>
 		    <input type="text" th:field="*{name}"   
 	      		class="form-control" /> 	
+	      	<!-- <<<<< Copy doan code nay cho tuong ung nhu html -->
 	      	</div>
-	      	
 	      	<div class="col-sm-4">
+	      	
+	      	<!-- >>>>>> Copy doan code nay cho tuong ung nhu html -->
 	      	<label>Category Name:</label>
-		    <select class="form-control" th:field="*{categoryId}">
+		    <select class="form-control" th:field="*{categoryId}" multiple="multiple" 
+				id="dcl2" name="dclSearchCategory">
 			  <option th:each="cate : ${dropCategory}" 
 			          th:value="${cate.id}" 
 			          th:text="${cate.name}">Dropdown</option>
 			</select>
+			<!-- <<<<< Copy doan code nay cho tuong ung nhu html -->
+			
 			</div>
 		</div>
 		<div class="row panel-body">
 			<div class=" col-sm-4">
+			
+			<!-- >>>>>> Copy doan code nay cho tuong ung nhu html -->
 			<label>Tag ID:</label>
 		    <input type="text" th:field="*{tagId}"   
 	      		class="form-control" />
+			<!-- <<<<< Copy doan code nay cho tuong ung nhu html -->
 			</div>
-			
 			<div class="col-sm-4">
+			
+			<!-- >>>>>> Copy doan code nay cho tuong ung nhu html -->
 			<label>Company:</label>
-		    <select class="form-control" th:field="*{companyId}">
+		    <select class="form-control" th:field="*{companyId}" multiple="multiple" 
+				id="dcl3" name="dclSearchCompany">
 			  <option th:each="com : ${dropCompany}" 
 			          th:value="${com.id}" 
 			          th:text="${com.name}">Company</option>
 			</select>
+			<!-- <<<<< Copy doan code nay cho tuong ung nhu html -->
+			
 			</div>
 			
 			<div class=" col-sm-4">
+			
+			<!-- >>>>>> Copy doan code nay cho tuong ung nhu html -->
 			<label>Remark:</label>
 		    <input type="text" th:field="*{remark}"   
 	      		class="form-control" />
+	        <!-- <<<<< Copy doan code nay cho tuong ung nhu html -->
 	      	</div>
 		</div>
 	</div> 
    
       <div class="row">
           <div class="col-sm-3">
-              <input type="submit" class="btn btn-lg btn-primary btn-block" 
-              name="btnSearch" id="btnSearch" value="Search"/>
+          		<button class="btn btn-primary btn-block" type="submit" 
+          			name="btnSearch" value="Search">
+          			Search
+          		</button>
+
               <span class="text-danger text-center" th:text="${errorSearch}"></span>
           </div>
           
           <div class="col-sm-3">
-              <button type="button" class="btn btn-lg btn-primary btn-block" 
+              <button type="button" class="btn btn-primary btn-block" 
               		name="btnDelete" onclick="submitDel()">
-              Delete
+              	Delete
               </button>
               <span class="text-danger text-center" th:text="${errorDelete}"></span>
           </div>
@@ -155,60 +206,110 @@
 	     <tr>
 	       <th>#</th>
 	       
+	       <!-- >>>>>> Doan code nay dung de hien thi Icon nhu bien mOrderBy
+	        	model.addAttribute("mOrderBy", sessionOrderBy);  -->
 	       <th>
-	       <a th:href="@{/categorylist/sortid}">Goods ID
-	       		<span th:switch='${ mOrderBy}'>
-<!-- 	       		case is already sorted by id, display up or down icon -->
-	       			<span th:case="'id'">
-	       				<span th:switch='${ mOrder}'>
-			       			<span th:case="'ASC'">
-			       				<span class="glyphicon glyphicon-sort-by-attributes"></span>
-			       			</span>
-			       			<span th:case="'DESC'">
-			       				<span class="glyphicon glyphicon-sort-by-attributes-alt"></span>
-			       			</span>
-			       		</span>
-	       			</span>
-	       			<span th:case="'name'">
-	       				<span class="glyphicon glyphicon-sort"></span>
-	       			</span>
-	       		</span>
-	       		
+			<!-- 	       Check gia tri bien mOrderBy bang Switch -->
+	       <a th:switch="${mOrderBy}" href="javascript:void(0)">
+	       		Goods ID
+	       		<!-- neu gia tri cua no la id ASC, hien thi icon tang dan va cung set value=id ASC -->
+		       <button class="btnSort" th:case="'id ASC'" type="submit" name="btnSearch" value="id ASC" style="color: inherit;">
+		       		<span class="glyphicon glyphicon-sort-by-attributes"></span>
+		       </button>
+		       <!-- neu gia tri cua no la id DESC, hien thi icon giam dan dan va cung set value=id DESC -->
+		       <button class="btnSort" th:case="'id DESC'" type="submit" name="btnSearch" value="id DESC" style="color: inherit;">
+		       		<span class="glyphicon glyphicon-sort-by-attributes-alt"></span>
+		       </button>
+		       <!-- neu gia tri cua no la cac gia tri khac, hien thi icon 2 chieu -->
+		       <button class="btnSort" th:case="*" type="submit" name="btnSearch" value="id DESC" style="color: inherit;">
+		       		<span class="glyphicon glyphicon-sort"></span>
+		       </button>
 	       </a></th>
-	       <th><a th:href="@{/categorylist/sortname}">Goods Name
-	       		<span th:switch='${ mOrderBy}'>
-	       			<span th:case="'name'">
-	       				<span th:switch='${ mOrder}'>
-			       			<span th:case="'ASC'">
-			       				<span class="glyphicon glyphicon-sort-by-attributes"></span>
-			       			</span>
-			       			<span th:case="'DESC'">
-			       				<span class="glyphicon glyphicon-sort-by-attributes-alt"></span>
-			       			</span>
-			       		</span>
-	       			</span>
-	       			
-	       			<span th:case="'id'">
-	       				<span class="glyphicon glyphicon-sort"></span>
-	       			</span>
-	       		</span>
+	       
+	       <!-- Lam tuong tu nhu tren -->
+	       <th><a th:switch="${mOrderBy}" href="javascript:void(0)">
+	       		Goods Name
+		       <button class="btnSort" th:case="'name ASC'" type="submit" name="btnSearch" value="name ASC" style="color: inherit;">
+		       		<span class="glyphicon glyphicon-sort-by-attributes"></span>
+		       </button>
+		       <button class="btnSort" th:case="'name DESC'" type="submit" name="btnSearch" value="name DESC" style="color: inherit;">
+		       		<span class="glyphicon glyphicon-sort-by-attributes-alt"></span>
+		       </button>
+		       <button class="btnSort" th:case="*" type="submit" name="btnSearch" value="name DESC" style="color: inherit;">
+		       		<span class="glyphicon glyphicon-sort"></span>
+		       </button>
 	       </a></th>
-	       <th>Category Name</th>
-	       <th>Company Name</th>
-	       <th>Remark</th>
-	       <th>Tag ID</th>
-	       <th>Floor</th>
+	       <th><a th:switch="${mOrderBy}" href="javascript:void(0)">
+	       		Category Name
+		       <button class="btnSort" th:case="'categoryname ASC'" type="submit" name="btnSearch" value="categoryname ASC" style="color: inherit;">
+		       		<span class="glyphicon glyphicon-sort-by-attributes"></span>
+		       </button>
+		       <button class="btnSort" th:case="'categoryname DESC'" type="submit" name="btnSearch" value="categoryname DESC" style="color: inherit;">
+		       		<span class="glyphicon glyphicon-sort-by-attributes-alt"></span>
+		       </button>
+		       <button class="btnSort" th:case="*" type="submit" name="btnSearch" value="categoryname DESC" style="color: inherit;">
+		       		<span class="glyphicon glyphicon-sort"></span>
+		       </button>
+	       </a></th>
+	       <th><a th:switch="${mOrderBy}" href="javascript:void(0)">
+	       		Company Name
+		       <button class="btnSort" th:case="'companyname ASC'" type="submit" name="btnSearch" value="companyname ASC" style="color: inherit;">
+		       		<span class="glyphicon glyphicon-sort-by-attributes"></span>
+		       </button>
+		       <button class="btnSort" th:case="'companyname DESC'" type="submit" name="btnSearch" value="companyname DESC" style="color: inherit;">
+		       		<span class="glyphicon glyphicon-sort-by-attributes-alt"></span>
+		       </button>
+		       <button class="btnSort" th:case="*" type="submit" name="btnSearch" value="companyname DESC" style="color: inherit;">
+		       		<span class="glyphicon glyphicon-sort"></span>
+		       </button>
+	       </a></th>
+	       <th><a th:switch="${mOrderBy}" href="javascript:void(0)">
+	       		Remark
+		       <button class="btnSort" th:case="'remark ASC'" type="submit" name="btnSearch" value="remark ASC" style="color: inherit;">
+		       		<span class="glyphicon glyphicon-sort-by-attributes"></span>
+		       </button>
+		       <button class="btnSort" th:case="'remark DESC'" type="submit" name="btnSearch" value="remark DESC" style="color: inherit;">
+		       		<span class="glyphicon glyphicon-sort-by-attributes-alt"></span>
+		       </button>
+		       <button class="btnSort" th:case="*" type="submit" name="btnSearch" value="remark DESC" style="color: inherit;">
+		       		<span class="glyphicon glyphicon-sort"></span>
+		       </button>
+	       </a></th>
+	       <th><a th:switch="${mOrderBy}" href="javascript:void(0)">
+	       		Tag ID
+		       <button class="btnSort" th:case="'idtag ASC'" type="submit" name="btnSearch" value="idtag ASC" style="color: inherit;">
+		       		<span class="glyphicon glyphicon-sort-by-attributes"></span>
+		       </button>
+		       <button class="btnSort" th:case="'idtag DESC'" type="submit" name="btnSearch" value="idtag DESC" style="color: inherit;">
+		       		<span class="glyphicon glyphicon-sort-by-attributes-alt"></span>
+		       </button>
+		       <button class="btnSort" th:case="*" type="submit" name="btnSearch" value="idtag DESC" style="color: inherit;">
+		       		<span class="glyphicon glyphicon-sort"></span>
+		       </button>
+	       </a></th>
+	       <th><a th:switch="${mOrderBy}" href="javascript:void(0)">
+	       		Floor
+		       <button class="btnSort" th:case="'floorname ASC'" type="submit" name="btnSearch" value="floorname ASC" style="color: inherit;">
+		       		<span class="glyphicon glyphicon-sort-by-attributes"></span>
+		       </button>
+		       <button class="btnSort" th:case="'floorname DESC'" type="submit" name="btnSearch" value="floorname DESC" style="color: inherit;">
+		       		<span class="glyphicon glyphicon-sort-by-attributes-alt"></span>
+		       </button>
+		       <button class="btnSort" th:case="*" type="submit" name="btnSearch" value="floorname DESC" style="color: inherit;">
+		       		<span class="glyphicon glyphicon-sort"></span>
+		       </button>
+	       </a></th>
 	       <th>Map</th>
 	       <th><input type="checkbox" name="allcheck" id="allcheck" 
 	       	onclick="allChecked(this.form)"/> Toggle All</th>
 	     </tr>
 	   </thead>
 	   <tbody>
+		<!--  CHo nay de hien thi tung gia tri, goodslist la bien model ta add tu controller model.addAttribute("goodslist", goods); -->
 	     <tr th:each="row,iterStat : ${goodslist}">
-	       <td th:text="${iterStat.count} + 1">#</td>
+	       <td th:text="${iterStat.count}">#</td>
 	       <td>
-		       <a th:onclick="'javascript:popup(\'/categorylist/update?id='+ ${row.id} +'\', \'500\', \'250\')'" >
-       			<span th:text="${{row.id}}" >#</span></a>
+       			<span th:text="${{row.id}}" >#</span>
 	       </td>
 	       <td th:text="${{row.name}}">#</td>
 	       <td th:text="${{row.categoryname}}">#</td>
@@ -223,6 +324,8 @@
 	   </tbody>
 	 </table>
 	 
+<!-- 	 Day la Message dialog de hien thi confirm message, 
+	se lam nhu category tren cty message-dialog, o day chi la demo -->
 	<div class="modal fade" id="confirmDelDialog" th:if="${confirmDelMsg != null}">
       <div class="modal-dialog">
 	    <div class="modal-content">

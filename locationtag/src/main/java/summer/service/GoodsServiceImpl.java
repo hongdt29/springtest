@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import summer.db.client.McategoryMapper;
 import summer.db.client.TgoodsMapper;
 import summer.db.entity.CompositeTGoods;
+import summer.db.entity.CompositeTGoodsResult;
 import summer.db.entity.Mcategory;
 import summer.db.entity.McategoryExample;
 import summer.db.entity.Muser;
@@ -18,7 +19,7 @@ public class GoodsServiceImpl implements IGoodsService {
 	private TgoodsMapper mapperGoods;
 
 	@Override
-	public List<CompositeTGoods> getAllGoods(CompositeTGoods condition) {
+	public List<CompositeTGoodsResult> getAllGoods(CompositeTGoods condition) {
 		return mapperGoods.getAllGoods(condition);
 	}
 

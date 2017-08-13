@@ -10,9 +10,9 @@ public class GoodsForm {
 	private String name;
 	private String remark;
 	
-	private String categoryId;
-	private String floorId;
-	private String companyId;
+	private List<String> categoryId;
+	private List<String> floorId;
+	private List<String> companyId;
 	private String tagId;
 	private List<String> deleteList;
 	public GoodsForm()
@@ -20,11 +20,18 @@ public class GoodsForm {
 		id = "";
 		name = "";
 		remark = "";
-		categoryId = "";
-		floorId = "";
-		companyId = "";
+		categoryId = new ArrayList<>();
+		floorId = new ArrayList<>();
+		companyId = new ArrayList<>();
 		tagId = "";
 	}
+	public List<String> getFloorId() {
+		return floorId;
+	}
+	public void setFloorId(List<String> floorId) {
+		this.floorId = floorId;
+	}
+
 	public String getId() {
 		return id;
 	}
@@ -48,23 +55,6 @@ public class GoodsForm {
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
-
-	public String getFloorId() {
-		return floorId;
-	}
-
-	public void setFloorId(String floorId) {
-		this.floorId = floorId;
-	}
-
-	public String getCompanyId() {
-		return companyId;
-	}
-
-	public void setCompanyId(String companyId) {
-		this.companyId = companyId;
-	}
-
 	
 	public String getTagId() {
 		return tagId;
@@ -82,12 +72,17 @@ public class GoodsForm {
 	public void setDeleteList(List<String> deleteList) {
 		this.deleteList = deleteList;
 	}
-
-	public String getCategoryId() {
+	public List<String> getCategoryId() {
 		return categoryId;
 	}
-
-	public void setCategoryId(String categoryId) {
+	public void setCategoryId(List<String> categoryId) {
 		this.categoryId = categoryId;
 	}
+	public List<String> getCompanyId() {
+		return companyId;
+	}
+	public void setCompanyId(List<String> companyId) {
+		this.companyId = companyId;
+	}
+	
 }

@@ -332,7 +332,11 @@
   </update>
   
   
-  <resultMap id="resultCompositeTGoods" type="summer.db.entity.CompositeTGoods">
+  
+  
+  
+<!--   DOan code them moi tu day -->
+  <resultMap id="resultCompositeTGoods" type="summer.db.entity.CompositeTGoodsResult">
     <id column="id" jdbcType="VARCHAR" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -364,23 +368,31 @@
 	    WHERE tgoods.id LIKE #{id,jdbcType=VARCHAR}
 	    AND tgoods.name LIKE #{name,jdbcType=VARCHAR}
 	    AND tgoods.remark LIKE #{remark,jdbcType=VARCHAR}
-	    AND tgoods.idfloor LIKE #{idfloor,jdbcType=VARCHAR}
 	    AND tgoods.idtag LIKE #{idtag,jdbcType=VARCHAR}
-	    AND tgoods.idcompany LIKE #{idcompany,jdbcType=VARCHAR}
-	    AND tgoods.idcategory LIKE #{idcategory,jdbcType=VARCHAR}
 	    AND (tgoods.deleteFlag LIKE #{deleteFlag,jdbcType=BIT}
 	    	OR tgoods.deleteFlag IS NULL)
-	    AND mfloor.id LIKE #{idfloor,jdbcType=VARCHAR}
-	    AND mcategory.id LIKE #{idcategory,jdbcType=VARCHAR}
-		AND mcompany.id LIKE #{idcompany,jdbcType=VARCHAR}
-		AND mtag.id LIKE #{idtag,jdbcType=VARCHAR}
+	    
+	    AND tgoods.idfloor IN
+	    	<foreach item="item" collection="idfloor" separator="," open="(" close=")">
+	        #{item}
+	    	</foreach>
+	    AND tgoods.idcompany IN
+	    	<foreach item="item" collection="idcompany" separator="," open="(" close=")">
+	        #{item}
+	    	</foreach>
+	    AND tgoods.idcategory IN
+	    	<foreach item="item" collection="idcategory" separator="," open="(" close=")">
+	        #{item}
+	    	</foreach>
+	    ORDER BY ${orderBy}
 	</select>
 	
 	
 	<update id="updateDeleteFlagToTrueByID" parameterType="java.lang.String">
 	    update tgoods
 	    set
-	      deleteFlag = #{true,jdbcType=BIT}
+	      deleteFlag = '1'
+	      
 	    where id = #{id,jdbcType=VARCHAR}
 	  </update>
 </mapper>

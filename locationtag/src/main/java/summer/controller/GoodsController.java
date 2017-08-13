@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import summer.db.entity.CompositeTGoods;
+import summer.db.entity.CompositeTGoodsResult;
 import summer.db.entity.Mcategory;
 import summer.db.entity.Mcompany;
 import summer.db.entity.Mfloor;
@@ -49,6 +50,8 @@ public class GoodsController {
 	public static String SESSION_COMPANY = "s_goods_company";
 	public static String SESSION_TAG = "s_goods_tag";
 	public static String SESSION_REMARK = "s_goods_remark";
+	
+	public static String SESSION_ORDERBY = "s_goods_orderby";
 	
 	@Autowired
 	private ICategoryService categoryService;
@@ -81,8 +84,16 @@ public class GoodsController {
 		//		nho do ma cac Text se lai duoc hien thi tren Text box
 		loadFromSession(goodsform);
 		
+		String sessionOrderBy = (String) session.getAttribute(SESSION_ORDERBY);
+		if (sessionOrderBy == null) {
+			sessionOrderBy = "id ASC";
+			session.setAttribute(SESSION_ORDERBY, sessionOrderBy);
+		}
+		// set thu tu Order by de hien thi icon tren HTML
+		model.addAttribute("mOrderBy", sessionOrderBy);
+		
 		// 3. Thuc hien viec search trong DB
-		List<CompositeTGoods> goods = searchDataFromDB(goodsform);
+		List<CompositeTGoodsResult> goods = searchDataFromDB(goodsform, sessionOrderBy);
 		model.addAttribute("goodslist", goods);
 
 		return "goods";
@@ -90,15 +101,42 @@ public class GoodsController {
 	
 	@PostMapping(value="/goodslist", params="btnSearch")
 	public String GoodsListSearch(@ModelAttribute("goodsform") GoodsForm goodsform,
-			Model model){
+			Model model,
+			@RequestParam("btnSearch") String btnSearchOrderLogic){
 		System.out.println("[DBG] GoodsListSearch called:" + goodsform.getCategoryId());
 		
 		// 1. Load data tu DB len de dua vao dropdown list
 		//   Tach thanh 1 ham rieng de cho de quan ly, xem ham nay phia ben duoi
 		loadDataForDropdown(model);
 		
+		// btnSearchOrderLogic the hien Order by information tren form. Neu chua co thi ta set mac dinh
+		// id ASC, neu co roi thi ta luu vao session va search DB nhu order nay
+		if (btnSearchOrderLogic == null) {
+			btnSearchOrderLogic = "id ASC";
+		}
+		if (btnSearchOrderLogic.equals("Search")) {
+			String sessionOrderBy = (String) session.getAttribute(SESSION_ORDERBY);
+			if (sessionOrderBy == null) {
+				sessionOrderBy = "id ASC";
+				session.setAttribute(SESSION_ORDERBY, sessionOrderBy);
+			}
+			btnSearchOrderLogic = sessionOrderBy;
+		} else {
+			// Inverse the search order
+			if (btnSearchOrderLogic.contains("ASC")) {
+				btnSearchOrderLogic = btnSearchOrderLogic.replace("ASC", "DESC");
+			} else {
+				btnSearchOrderLogic = btnSearchOrderLogic.replace("DESC", "ASC");
+			}
+		}
+			
+		session.setAttribute(SESSION_ORDERBY, btnSearchOrderLogic);
+		
+		// set thu tu Order by de hien thi icon tren HTML
+		model.addAttribute("mOrderBy", btnSearchOrderLogic);
+		
 		// 2. Thuc hien viec search trong DB
-		List<CompositeTGoods> goods = searchDataFromDB(goodsform);
+		List<CompositeTGoodsResult> goods = searchDataFromDB(goodsform, btnSearchOrderLogic);
 		model.addAttribute("goodslist", goods);
 
 		// 3. store cac gia tri search vao session
@@ -126,7 +164,14 @@ public class GoodsController {
 			// Sau do lai Search lai data 1 lan nua de hien thi
 			loadDataForDropdown(model);
 			loadFromSession(goodsform);
-			List<CompositeTGoods> goods = searchDataFromDB(goodsform);
+			
+			String sessionOrderBy = (String) session.getAttribute(SESSION_ORDERBY);
+			if (sessionOrderBy == null) {
+				sessionOrderBy = "id ASC";
+				session.setAttribute(SESSION_ORDERBY, sessionOrderBy);
+			}
+			model.addAttribute("mOrderBy", sessionOrderBy);
+			List<CompositeTGoodsResult> goods = searchDataFromDB(goodsform, sessionOrderBy);
 			model.addAttribute("goodslist", goods);
 
 			return "goods";
@@ -144,7 +189,13 @@ public class GoodsController {
 			// Sau do van phai search lai lan nua
 			loadDataForDropdown(model);
 			loadFromSession(goodsform);
-			List<CompositeTGoods> goods = searchDataFromDB(goodsform);
+			String sessionOrderBy = (String) session.getAttribute(SESSION_ORDERBY);
+			if (sessionOrderBy == null) {
+				sessionOrderBy = "id ASC";
+				session.setAttribute(SESSION_ORDERBY, sessionOrderBy);
+			}
+			model.addAttribute("mOrderBy", sessionOrderBy);
+			List<CompositeTGoodsResult> goods = searchDataFromDB(goodsform, sessionOrderBy);
 			model.addAttribute("goodslist", goods);
 			
 			return "goods";
@@ -160,7 +211,13 @@ public class GoodsController {
 			// Delete xong thi lai search reload lai data
 			loadDataForDropdown(model);
 			loadFromSession(goodsform);
-			List<CompositeTGoods> goods = searchDataFromDB(goodsform);
+			String sessionOrderBy = (String) session.getAttribute(SESSION_ORDERBY);
+			if (sessionOrderBy == null) {
+				sessionOrderBy = "id ASC";
+				session.setAttribute(SESSION_ORDERBY, sessionOrderBy);
+			}
+			model.addAttribute("mOrderBy", sessionOrderBy);
+			List<CompositeTGoodsResult> goods = searchDataFromDB(goodsform, sessionOrderBy);
 			model.addAttribute("goodslist", goods);
 			
 			return "goods";
@@ -168,7 +225,7 @@ public class GoodsController {
 		return "goods";
 	}
 	
-	private List<CompositeTGoods> searchDataFromDB(GoodsForm goodsform)
+	private List<CompositeTGoodsResult> searchDataFromDB(GoodsForm goodsform, String orderBy)
 	{
 		// O day class CompositeTGoods the hien cac Dieu kien de search
 		// Cac member cua class nay giong nhu tren Form
@@ -186,17 +243,23 @@ public class GoodsController {
 		if (goodsform.getRemark().isEmpty() == false) {
 			condition.setRemark("%" + goodsform.getRemark()+ "%");
 		}
-		
-		if (goodsform.getCategoryId().isEmpty() == false) {
+		if (goodsform.getCategoryId() == null || goodsform.getCategoryId().size() == 0) {
+			condition.getIdcategory().add("%");
+		} else {
 			condition.setIdcategory(goodsform.getCategoryId());
 		}
-		if (goodsform.getFloorId().isEmpty() == false) {
+		if (goodsform.getFloorId() == null || goodsform.getFloorId().size() == 0) {
+			condition.getIdfloor().add("%");
+		} else {
 			condition.setIdfloor(goodsform.getFloorId());
 		}
-		if (goodsform.getCompanyId().isEmpty() == false) {
+		if (goodsform.getCompanyId() == null || goodsform.getCompanyId().size() == 0) {
+			condition.getIdcompany().add("%");
+		} else {
 			condition.setIdcompany(goodsform.getCompanyId());
 		}
-
+		condition.setOrderBy(orderBy);
+		
 		// Sau khi co dieu kien search roi  thi thuc hien search by service
 		return goodsService.getAllGoods(condition);
 	}
@@ -212,7 +275,7 @@ public class GoodsController {
 		// Truoc het tao 1 bien moi, set ID = % (nghia la search all), value "-"
 		// nghia la tren cai dropdown se co cai - dau tien
 		Mcompany defaultComp = new Mcompany();
-		defaultComp.setName("-");
+		defaultComp.setName("all");
 		defaultComp.setId("%");
 		
 		if (companies != null) {
@@ -227,7 +290,7 @@ public class GoodsController {
 		}
 		// tuong tu cho cac dropdown list khac
 		Mcategory defaultCate = new Mcategory();
-		defaultCate.setName("-");
+		defaultCate.setName("all");
 		defaultCate.setId("%");
 		if (allCates != null) {
 			allCates.add(0, defaultCate);
@@ -236,7 +299,7 @@ public class GoodsController {
 			allCates.add(0, defaultCate);
 		}
 		Mfloor defaultFloor = new Mfloor();
-		defaultFloor.setName("-");
+		defaultFloor.setName("all");
 		defaultFloor.setId("%");
 		if (floors != null) {
 			floors.add(0, defaultFloor);
@@ -284,17 +347,17 @@ public class GoodsController {
 			formData.setTagId(s4);
 		}
 		
-		String s5 = (String) session.getAttribute(SESSION_FLOOR);
+		List<String> s5 = (List<String>) session.getAttribute(SESSION_FLOOR);
 		if (s5 != null) {
 			formData.setFloorId(s5);
 		}
 		
-		String s6 = (String) session.getAttribute(SESSION_CATEGORY);
+		List<String> s6 = (List<String>) session.getAttribute(SESSION_CATEGORY);
 		if (s6 != null) {
 			formData.setCategoryId(s6);
 		}
 		
-		String s7 = (String) session.getAttribute(SESSION_COMPANY);
+		List<String> s7 = (List<String>) session.getAttribute(SESSION_COMPANY);
 		if (s7 != null) {
 			formData.setCompanyId(s7);
 		}

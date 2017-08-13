@@ -4,6 +4,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import summer.db.entity.CompositeTGoods;
+import summer.db.entity.CompositeTGoodsResult;
 import summer.db.entity.Tgoods;
 import summer.db.entity.TgoodsExample;
 
@@ -75,8 +76,8 @@ public interface TgoodsMapper {
 	int updateByPrimaryKey(Tgoods record);
 	
 	
-
-	List<CompositeTGoods> getAllGoods(CompositeTGoods condition);
+	// Cac function Them Moi tu day
+	List<CompositeTGoodsResult> getAllGoods(CompositeTGoods condition);
 	int updateDeleteFlagToTrueByID(String id);
     
 }
