@@ -12,6 +12,8 @@ import summer.db.entity.CompositeTGoodsResult;
 import summer.db.entity.Mcategory;
 import summer.db.entity.McategoryExample;
 import summer.db.entity.Muser;
+import summer.db.entity.Tgoods;
+import summer.db.entity.TgoodsExample;
 
 @Service
 public class GoodsServiceImpl implements IGoodsService {
@@ -26,6 +28,12 @@ public class GoodsServiceImpl implements IGoodsService {
 	@Override
 	public int updateDeleteFlagToTrueByID(String id) {
 		return mapperGoods.updateDeleteFlagToTrueByID(id);
+	}
+
+	@Override
+	public int insertNewGoods(Tgoods goods) {
+		return mapperGoods.insert(goods);
+		
 	}
 	
 

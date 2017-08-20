@@ -1,5 +1,10 @@
 package summer.controller;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -30,9 +36,11 @@ import summer.db.entity.Mcategory;
 import summer.db.entity.Mcompany;
 import summer.db.entity.Mfloor;
 import summer.db.entity.Mtag;
+import summer.db.entity.Tgoods;
 import summer.formmodel.CategoryCreateForm;
 import summer.formmodel.CategoryEditForm;
 import summer.formmodel.CategorySearchForm;
+import summer.formmodel.GoodsCreateForm;
 import summer.formmodel.GoodsForm;
 import summer.service.ICategoryService;
 import summer.service.ICompanyService;
@@ -52,6 +60,10 @@ public class GoodsController {
 	public static String SESSION_REMARK = "s_goods_remark";
 	
 	public static String SESSION_ORDERBY = "s_goods_orderby";
+	
+	public static String SESSION_EXPORTMSG = "s_exportmsg"; // DONE when export OK, Error...
+	//when not OK
+	public static String SESSION_EXPORTDATA = "s_exportdata";
 	
 	@Autowired
 	private ICategoryService categoryService;
@@ -78,7 +90,7 @@ public class GoodsController {
 		
 		// 1. Load data tu DB len de dua vao dropdown list
 		//   Tach thanh 1 ham rieng de cho de quan ly, xem ham nay phia ben duoi
-		loadDataForDropdown(model);
+		loadDataForDropdown(model, false);
 		
 		// 2. Load cac data cua Search FOrm cu tren session vao bien "goodsform"
 		//		nho do ma cac Text se lai duoc hien thi tren Text box
@@ -96,6 +108,20 @@ public class GoodsController {
 		List<CompositeTGoodsResult> goods = searchDataFromDB(goodsform, sessionOrderBy);
 		model.addAttribute("goodslist", goods);
 
+		// 4. Ta them buoc check neu co message cho Export hay khong tu session
+		String exportMsg = (String) session.getAttribute(SESSION_EXPORTMSG);
+		if (exportMsg != null) {
+			if (exportMsg.equals("DONE")) {
+				// Truong hop nay nghia la da DONE viec save, ta hien thi dialog bang
+				// viec set attribute resultExportMsg
+				model.addAttribute("resultExportMsg", "Export Done");
+			} else {
+				// Neu khog, co error, ta set message
+				model.addAttribute("errorExport", exportMsg);
+			}
+			session.setAttribute(SESSION_EXPORTMSG, null);
+		}
+		
 		return "goods";
 	}
 	
@@ -107,7 +133,7 @@ public class GoodsController {
 		
 		// 1. Load data tu DB len de dua vao dropdown list
 		//   Tach thanh 1 ham rieng de cho de quan ly, xem ham nay phia ben duoi
-		loadDataForDropdown(model);
+		loadDataForDropdown(model, false);
 		
 		// btnSearchOrderLogic the hien Order by information tren form. Neu chua co thi ta set mac dinh
 		// id ASC, neu co roi thi ta luu vao session va search DB nhu order nay
@@ -142,6 +168,21 @@ public class GoodsController {
 		// 3. store cac gia tri search vao session
 		storeToSession(goodsform);
 		
+		// 4. Ta them buoc check neu co message cho Export hay khong tu session
+		String exportMsg = (String) session.getAttribute(SESSION_EXPORTMSG);
+		if (exportMsg != null) {
+			if (exportMsg.equals("DONE")) {
+				// Truong hop nay nghia la da DONE viec save, ta hien thi dialog bang
+				// viec set attribute resultExportMsg
+				model.addAttribute("resultExportMsg", "Export Done");
+			} else {
+				// Neu khog, co error, ta set message
+				model.addAttribute("errorExport", exportMsg);
+			}
+			session.setAttribute(SESSION_EXPORTMSG, null);
+		}
+		
+		
 		
 		return "goods";
 	}
@@ -162,7 +203,7 @@ public class GoodsController {
 			model.addAttribute("errorDelete", "Please select 1 item");
 			
 			// Sau do lai Search lai data 1 lan nua de hien thi
-			loadDataForDropdown(model);
+			loadDataForDropdown(model, false);
 			loadFromSession(goodsform);
 			
 			String sessionOrderBy = (String) session.getAttribute(SESSION_ORDERBY);
@@ -187,7 +228,7 @@ public class GoodsController {
 					goodsform.getDeleteList().size() + " items ?");
 			
 			// Sau do van phai search lai lan nua
-			loadDataForDropdown(model);
+			loadDataForDropdown(model, false);
 			loadFromSession(goodsform);
 			String sessionOrderBy = (String) session.getAttribute(SESSION_ORDERBY);
 			if (sessionOrderBy == null) {
@@ -209,7 +250,7 @@ public class GoodsController {
 			}
 			
 			// Delete xong thi lai search reload lai data
-			loadDataForDropdown(model);
+			loadDataForDropdown(model, false);
 			loadFromSession(goodsform);
 			String sessionOrderBy = (String) session.getAttribute(SESSION_ORDERBY);
 			if (sessionOrderBy == null) {
@@ -224,6 +265,140 @@ public class GoodsController {
 		}
 		return "goods";
 	}
+	
+	
+	@GetMapping("/goods/create")
+	public String GoodsCreate(@ModelAttribute("goodscreate") GoodsCreateForm goodscreate,
+			Model model){
+		System.out.println("[DBG] GoodsCreate called");
+		
+		loadDataForDropdown(model, true);
+		
+		model.addAttribute("confirmMsg", "Do you want to create new ?");
+		model.addAttribute("infoMsg", "Not Create ");
+		return "goodscreate";
+	}
+	@PostMapping("/goods/create")
+	public String GoodsCreatePost(@ModelAttribute("goodscreate") GoodsCreateForm goodscreate,
+			Model model){
+		System.out.println("[DBG] GoodsCreatePost called");
+		
+		loadDataForDropdown(model, true);
+		
+		Tgoods goods = new Tgoods();
+		goods.setId(goodscreate.getId());
+		goods.setName(goodscreate.getName());
+		goods.setRemark(goodscreate.getRemark());
+		goods.setIdcategory(goodscreate.getCategoryId());
+		goods.setIdcompany(goodscreate.getCompanyId());
+		goods.setIdtag(goodscreate.getTagId());
+		goods.setIdfloor(goodscreate.getFloorId());
+		
+		goodsService.insertNewGoods(goods);
+		
+		model.addAttribute("confirmMsg", "Already created ?");
+		model.addAttribute("infoMsg", "Create OK ");
+		return "goodscreate";
+	}
+	@GetMapping("/goodsexportprepare")
+	public String GoodsExportPrepare(){
+		System.out.println("[DBG] GoodsExportPrepare called");
+		
+		// >>>>>> 1. Load cac data cua Search FOrm cu tren session vao bien "goodsform"
+		GoodsForm goodsform = new GoodsForm();
+		loadFromSession(goodsform);
+		String sessionOrderBy = (String) session.getAttribute(SESSION_ORDERBY);
+		if (sessionOrderBy == null) {
+			sessionOrderBy = "id ASC";
+			session.setAttribute(SESSION_ORDERBY, sessionOrderBy);
+		}
+		List<CompositeTGoodsResult> goods = searchDataFromDB(goodsform, sessionOrderBy);
+		// <<<<<<< End 1.
+		
+		if (goods == null || goods.size() == 0) {
+			// Ta set error message khi size = 0 here in E0303
+			session.setAttribute(SESSION_EXPORTMSG, "Size of export list is 0!");
+			// Ta tra lai 1 View, View nay se close ngay khi no load
+			return "goodsexportprepare";
+		} else {
+			// Trong truong hop data OK, ta luu tam thoi vao session roi chuyen sang goodsexport
+			session.setAttribute(SESSION_EXPORTDATA, goods);
+			return "redirect:/goodsexport";
+		}
+	}
+	
+	// only have response body here to return content of CSV file
+	@GetMapping("/goodsexport")
+	@ResponseBody
+	public void GoodsExport(){
+		
+		// -------------------------Do the query same as current query to get the data
+		System.out.println("[DBG] GoodsExport called");
+		
+		// Ta lay data luu tu session tu action goodsexportprepare
+		List<CompositeTGoodsResult> goods = (List<CompositeTGoodsResult>) session.getAttribute(SESSION_EXPORTDATA);
+		
+		// Convert to String CSV format
+		StringBuilder sb = convertToCSVString(goods);
+		
+		// Remove export data to save memory
+		session.removeAttribute(SESSION_EXPORTDATA);
+		
+		// --- Do the save csv file here to response
+		String strExport = sb.toString();
+		InputStream is = new ByteArrayInputStream(strExport.getBytes());
+		
+		try {
+			IOUtils.copy(is, response.getOutputStream());
+			
+			// Calculate the file name
+			DateFormat df = new SimpleDateFormat("YYYYMMdd");
+			Date now = new Date();
+			String fileName = "Goodslist_"+df.format(now)+".csv";
+			
+			response.setContentType("application/xls");
+	        response.setHeader("Content-Disposition","attachment; filename="+fileName);
+			response.flushBuffer();
+		} catch (IOException e) {
+			e.printStackTrace();
+			// Message when save not OK E0009
+			session.setAttribute(SESSION_EXPORTMSG, "Error save file!");
+			return;
+		}
+		
+		// Ta set export message to DONE de ma khi reload lai goodslist, ta co session value DONE
+		//  de hien thi dialog message I0004
+		session.setAttribute(SESSION_EXPORTMSG, "DONE");
+		
+		return;
+	}
+	
+	private StringBuilder convertToCSVString(List<CompositeTGoodsResult> goods) {
+		StringBuilder sb = new StringBuilder();
+        sb.append("Goods ID,");
+        sb.append("Goods Name,");
+        sb.append("categoryname,");
+        sb.append("companyname,");
+        sb.append("remark,");
+        sb.append("idtag,");
+        sb.append("floorname");
+        
+        sb.append('\n');
+        
+        for (CompositeTGoodsResult i : goods) {
+			sb.append(""+i.getId()+",");
+			sb.append(""+i.getName()+",");
+			sb.append(""+i.getCategoryname()+",");
+			sb.append(""+i.getCompanyname()+",");
+			sb.append(""+i.getRemark()+",");
+			sb.append(""+i.getIdtag()+",");
+			sb.append(""+i.getFloorname());
+			
+			sb.append('\n');
+		}
+        return sb;
+	}
+	
 	
 	private List<CompositeTGoodsResult> searchDataFromDB(GoodsForm goodsform, String orderBy)
 	{
@@ -263,51 +438,51 @@ public class GoodsController {
 		// Sau khi co dieu kien search roi  thi thuc hien search by service
 		return goodsService.getAllGoods(condition);
 	}
-	private void loadDataForDropdown(Model model) {
+	private void loadDataForDropdown(Model model, boolean isCreateFirstAllItem) {
 		// Lay het cac List cho Dropdown thu DB
 		List<Mcategory> allCates = categoryService.getAllCategoryNotDeleted("id ASC");
 		List<Mfloor> floors = floorService.getAllFloors();
 		List<Mcompany> companies = companyService.getAllCompany(); 
-		List<Mtag> tags = tagService.getAllTags();
 		
-		// Xu ly them truong hop Default, add them 1 element vao dau tien cua List
-		
-		// Truoc het tao 1 bien moi, set ID = % (nghia la search all), value "-"
-		// nghia la tren cai dropdown se co cai - dau tien
-		Mcompany defaultComp = new Mcompany();
-		defaultComp.setName("all");
-		defaultComp.setId("%");
-		
-		if (companies != null) {
-			// Neu nhu list cac Company da co it nhat 1 thanh phan, add them vao dau
-			// so 0 o day nghia la add vao index 0 - dau tien
-			companies.add(0, defaultComp);
-		} else {
-			// Neu nhu chua co thanh phan nao, vi companies la null nen phai tao List truoc
-			// khi add vao dau
-			companies = new ArrayList<Mcompany>();
-			companies.add(0, defaultComp);
+		if (isCreateFirstAllItem) {
+			// Xu ly them truong hop Default, add them 1 element vao dau tien cua List
+			
+			// Truoc het tao 1 bien moi, set ID = % (nghia la search all), value "-"
+			// nghia la tren cai dropdown se co cai - dau tien
+			Mcompany defaultComp = new Mcompany();
+			defaultComp.setName("all");
+			defaultComp.setId("%");
+			
+			if (companies != null) {
+				// Neu nhu list cac Company da co it nhat 1 thanh phan, add them vao dau
+				// so 0 o day nghia la add vao index 0 - dau tien
+				companies.add(0, defaultComp);
+			} else {
+				// Neu nhu chua co thanh phan nao, vi companies la null nen phai tao List truoc
+				// khi add vao dau
+				companies = new ArrayList<Mcompany>();
+				companies.add(0, defaultComp);
+			}
+			// tuong tu cho cac dropdown list khac
+			Mcategory defaultCate = new Mcategory();
+			defaultCate.setName("all");
+			defaultCate.setId("%");
+			if (allCates != null) {
+				allCates.add(0, defaultCate);
+			} else {
+				allCates = new ArrayList<Mcategory>();
+				allCates.add(0, defaultCate);
+			}
+			Mfloor defaultFloor = new Mfloor();
+			defaultFloor.setName("all");
+			defaultFloor.setId("%");
+			if (floors != null) {
+				floors.add(0, defaultFloor);
+			} else {
+				floors = new ArrayList<Mfloor>();
+				floors.add(0, defaultFloor);
+			}
 		}
-		// tuong tu cho cac dropdown list khac
-		Mcategory defaultCate = new Mcategory();
-		defaultCate.setName("all");
-		defaultCate.setId("%");
-		if (allCates != null) {
-			allCates.add(0, defaultCate);
-		} else {
-			allCates = new ArrayList<Mcategory>();
-			allCates.add(0, defaultCate);
-		}
-		Mfloor defaultFloor = new Mfloor();
-		defaultFloor.setName("all");
-		defaultFloor.setId("%");
-		if (floors != null) {
-			floors.add(0, defaultFloor);
-		} else {
-			floors = new ArrayList<Mfloor>();
-			floors.add(0, defaultFloor);
-		}
-		
 		// Sau khi co cac list data thi tat set vao bien model de hien thi tren view
 		model.addAttribute("dropFloor", floors);
 		model.addAttribute("dropCategory", allCates);

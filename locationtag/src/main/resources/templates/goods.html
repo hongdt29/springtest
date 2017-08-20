@@ -15,6 +15,7 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 	<script type="text/javascript" src="/js/ui.dropdownchecklist-1.5-min.js"></script>
+	<script type="text/javascript" src="/js/FileSaver.js"></script>
 	<style>
 	th, td {
 		padding: 5px;
@@ -27,22 +28,28 @@
 	// Ham init, chuan bi confirm dialog va cac dropdown list
 	$(document).ready(function(){
 	    $('#confirmDelDialog').modal('show');
+	    $('#resultExportDialog').modal('show');
 	    
-	    $("#dcl").dropdownchecklist({firstItemChecksAll: true, maxDropHeight: 100,
+	    $("#dcl").dropdownchecklist({firstItemChecksAll: true, maxDropHeight: 200,
 	    	width:150});
-	    $("#dcl2").dropdownchecklist({firstItemChecksAll: true, maxDropHeight: 100,
+	    $("#dcl2").dropdownchecklist({firstItemChecksAll: true, maxDropHeight: 200,
 	    	width:150});
-	    $("#dcl3").dropdownchecklist({firstItemChecksAll: true, maxDropHeight: 100,
+	    $("#dcl3").dropdownchecklist({firstItemChecksAll: true, maxDropHeight: 200,
 	    	width:150});
+	    
+	    $('.limitlength').each(function(){
+	        $(this).text($(this).text().substring(0,10)+"...");
+	     });
 	});
 
-   function popup(url, w, h) {
+   function popup(url) {
       // open your window here
       //window.open("/categorylist/create", 'height=200,width=150');
-      newwindow=window.open(url,'name','height=250,width=500');
+      newwindow=window.open(url,'name','height=350,width=800');
+      //newwindow=window.open(url);
       if (window.focus) {
-   	  newwindow.focus()
-       }
+   	  	newwindow.focus()
+      }
       return false;
    }
 
@@ -84,6 +91,20 @@
 		// Day la user da confirm delete OK, do do add force to yes
 	   $("#force").val("yes");
 	   $("#frmGoods").submit();
+   }
+
+   function exportFile()
+   {
+	    //window.location.href = "/goodsexportprepare";
+	    
+	  	newwindow=window.open("/goodsexportprepare");
+	   	if (window.focus) {
+		  	newwindow.focus()
+	   	}
+
+	   //	newwindow.opener.location.reload(true);
+	   	location.reload(true);
+	   	//newwindow.close();
    }
  //]]>
 </script>
@@ -189,6 +210,13 @@
 
               <span class="text-danger text-center" th:text="${errorSearch}"></span>
           </div>
+ 
+          <div class="col-sm-3">
+          		<button class="btn btn-primary btn-block" type="button" 
+          			name="btnCreate" value="Create" onclick="popup('/goods/create')">
+          			Create New
+          		</button>
+          </div>
           
           <div class="col-sm-3">
               <button type="button" class="btn btn-primary btn-block" 
@@ -197,6 +225,15 @@
               </button>
               <span class="text-danger text-center" th:text="${errorDelete}"></span>
           </div>
+          
+          <div class="col-sm-3">
+              <button class="btn btn-primary btn-block" 
+              		 type="button" name="btnExport" onclick="exportFile()">
+              	Export File
+              </button>
+              <span class="text-danger text-center" th:text="${errorExport}"></span>
+          </div>
+
       </div>
 	
    
@@ -314,7 +351,7 @@
 	       <td th:text="${{row.name}}">#</td>
 	       <td th:text="${{row.categoryname}}">#</td>
 	       <td th:text="${{row.companyname}}">#</td>
-	       <td th:text="${{row.remark}}">#</td>
+	       <td th:text="${{row.remark}}" class="limitlength">#</td>
 	       <td th:text="${{row.idtag}}">#</td>
 	       <td th:text="${{row.floorname}}">#</td>
 	       <td>#</td>
@@ -340,6 +377,27 @@
 	        <button type="button" class="btn btn-default" data-dismiss="modal" 
 	        	onclick="submitDelContinue()">Yes</button>
 	        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	
+	
+	
+	<!-- 	 Day la Message dialog de hien thi export OK, 
+	se lam nhu category tren cty message-dialog, o day chi la demo -->
+	<div class="modal fade" id="resultExportDialog" th:if="${resultExportMsg != null}">
+      <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal">&times;</button>
+	        <h4 class="modal-title">Message</h4>
+	      </div>
+	      <div class="modal-body">
+	        <p th:text="${resultExportMsg}"></p>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
 	      </div>
 	    </div>
 	  </div>

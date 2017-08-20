@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+	<title>Create New</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link rel="stylesheet" type="text/css"
+		href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
+	<link rel="stylesheet" type="text/css" 
+		href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/smoothness/jquery-ui.css"/>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+	<script type="text/javascript" src="/js/ui.dropdownchecklist-1.5-min.js"></script>
+
+<script type="text/javascript">//<![CDATA[
+	
+	// Ham init, chuan bi confirm dialog va cac dropdown list
+	$(document).ready(function(){
+	    $('#confirmDelDialog').modal('show');
+	    
+	    $("#dcl").dropdownchecklist({firstItemChecksAll: true, maxDropHeight: 100,
+	    	width:150});
+	    $("#dcl2").dropdownchecklist({firstItemChecksAll: true, maxDropHeight: 100,
+	    	width:150});
+	    $("#dcl3").dropdownchecklist({firstItemChecksAll: true, maxDropHeight: 100,
+	    	width:150});
+	});
+	
+	function CloseMe()
+	{
+		window.opener.location.reload();
+		window.close();
+	}
+
+	function SubmitCreate()
+	{
+		$("#frmCreate").submit();
+	}
+	
+	function ShowConfirmDialog()
+	{
+		//$('#confirmDialog').modal('show');
+	}
+ //]]>
+</script>
+</head>
+<body>
+<div class="container">
+<form th:action="@{/goods/create}" th:object="${goodscreate}" method="post" id="frmCreate">
+<div class="panel panel-default grid">
+	<div class="row panel-body">
+	<div class="col-sm-4">
+		<label>ID:</label>
+		<input type="text" th:field="*{id}"
+            class="form-control" />
+	</div>
+	
+	<div class="col-sm-4">
+		<label>Name:</label>
+		<input type="text" th:field="*{name}"
+            class="form-control" />
+	</div>
+	
+	<div class="col-sm-4">
+		<label>Remark:</label>
+		<input type="text" th:field="*{remark}"
+            class="form-control" />
+	</div>	
+	<div class="col-sm-4">
+		<label>Tag ID:</label>
+	    <input type="text" th:field="*{tagId}"   
+      		class="form-control" />
+	</div>	
+	</div>
+	
+	<div class="row panel-body">
+	<div class="col-sm-4">
+		<label>Floor Name:</label>
+		<select class="form-control" th:field="*{floorId}" multiple="multiple" 
+			id="dcl" name="dclSearchFloor">
+		  	<option th:each="floor : ${dropFloor}" 
+		          th:value="${floor.id}" 
+		          th:text="${floor.name}">Floor
+		    </option>
+		</select>
+	</div>
+	
+	<div class="col-sm-4">
+		<label>Category Name:</label>
+	    <select class="form-control" th:field="*{categoryId}" multiple="multiple" 
+			id="dcl2" name="dclSearchCategory">
+		  <option th:each="cate : ${dropCategory}" 
+		          th:value="${cate.id}" 
+		          th:text="${cate.name}">Dropdown</option>
+		</select>
+	</div>
+	
+	<div class="col-sm-4">
+		<label>Company:</label>
+	    <select class="form-control" th:field="*{companyId}" multiple="multiple" 
+			id="dcl3" name="dclSearchCompany">
+		  <option th:each="com : ${dropCompany}" 
+		          th:value="${com.id}" 
+		          th:text="${com.name}">Company</option>
+		</select>
+	</div>
+    </div>
+    
+   <input type="button" name="create" id="create" value="Create" onclick="ShowConfirmDialog()"/>
+
+   <input type="button" name="close" id="close" value="Close" onclick="CloseMe()"/>
+   
+ </div>
+ 
+ <div class="modal fade" id="confirmDialog">
+     <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Message</h4>
+      </div>
+      <div class="modal-body">
+        <p th:text="${confirmMsg}"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" 
+        	onclick="SubmitCreate()">Yes</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="infoDialog">
+     <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Information</h4>
+      </div>
+      <div class="modal-body">
+        <p th:text="${infoMsg}"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" 
+        	onclick="CloseMe()">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</form>
+</div>
+</body>
+</html>
