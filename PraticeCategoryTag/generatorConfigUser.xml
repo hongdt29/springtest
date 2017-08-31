@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+<classPathEntry location="C:\Users\\pinku\\.gradle\\caches\\modules-2\\files-2.1\\mysql\\mysql-connector-java\\5.1.4\\a60e0a6de16ad99bcd1aa954034b825ddc0b5ebf\\mysql-connector-java-5.1.4.jar" />
+  <context id="context1">
+  <!-- 	   schema la DB name, tableName la table -->
+    <jdbcConnection connectionURL="jdbc:mysql://localhost:3306/locationtag" 
+	    driverClass="com.mysql.jdbc.Driver" 
+	   	password="" userId="root" />
+	   <javaModelGenerator targetPackage="summer.db.entity" targetProject="PraticeCategoryTag" />
+	   <sqlMapGenerator targetPackage="mappers" targetProject="PraticeCategoryTag" />
+	   <javaClientGenerator targetPackage="summer.db.client" targetProject="PraticeCategoryTag" type="XMLMAPPER" />
+	   
+	   <table schema="locationtag" tableName="muser">
+	   </table>
+	   <table schema="locationtag" tableName="MCategory">
+	   </table>
+	   
+	   <table schema="locationtag" tableName="tgoods">
+	   </table>
+	   <table schema="locationtag" tableName="mtag">
+	   </table>
+	   <table schema="locationtag" tableName="mfloor">
+	   </table>
+	   <table schema="locationtag" tableName="mcompany">
+	   </table>
+		<table schema="locationtag" tableName="mvitalset">
+	   </table>
+  </context>
+</generatorConfiguration>

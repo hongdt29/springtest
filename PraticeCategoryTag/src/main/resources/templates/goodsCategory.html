@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html class = 'no-js' lang = 'ja' xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<title>GoodsCategorySet</title>
+	</head>
+	<body>
+		<form class="form-horizontal"  th:action="@{/categorySearch}" th:object="${categoryForm}" method="post">
+			<fieldset>
+				<!-- Form Name -->
+				<legend>Search Condition</legend>
+				
+				<!-- Text input-->
+				<div class="form-group">
+				  <label class="col-md-4 control-label" for="goodsCategoryID">GoodsCategoryID</label>  
+				  <div class="col-md-4">
+				  <input th:field="*{categoryId}" id="goodsCategoryID" name="goodsCategoryID" type="text" class="form-control input-md"/>
+				  </div>
+				</div>
+				<div class="form-group">
+				  <label class="col-md-4 control-label" for="GoodsCategoryName">GoodsCategoryName</label>  
+				  <div class="col-md-4">
+				  <input  th:field="*{categoryName}" id="goodsCategoryName" name="goodsCategoryName" type="text" class="form-control input-md"/>
+				  </div>
+				</div>
+				<!-- Button -->
+				<div class="form-group">
+				  <label class="col-md-4 control-label" for="submit"></label>
+				  <div class="col-md-4">
+				    <button id="submit" name="submit" class="btn btn-primary">Search</button>
+				  </div>
+				  <div class="col-md-4">
+				    <button id="submit" name="submit" class="btn btn-primary">Create New</button>
+				  </div>
+				  <div class="col-md-4">
+				    <button id="submit" name="submit" class="btn btn-primary">Delete</button>
+				  </div>
+				</div>
+			</fieldset>
+			<table class="table table-hover">
+			    <thead>
+			      <tr>
+			        <th>#</th>
+			        <th>Firstname</th>
+			        <th>Lastname</th>
+			        <th>Email</th>
+			      </tr>
+			    </thead>
+			    <tbody>
+			      <tr>
+			        <td>John</td>
+			        <td>Doe</td>
+			        <td>john@example.com</td>
+			      </tr>
+			      <tr>
+			        <td>Mary</td>
+			        <td>Moe</td>
+			        <td>mary@example.com</td>
+			      </tr>
+			      <tr>
+			        <td>July</td>
+			        <td>Dooley</td>
+			        <td>july@example.com</td>
+			      </tr>
+			      <tr>
+			        <td>John</td>
+			        <td>Doe</td>
+			        <td>john@example.com</td>
+			      </tr>
+			    </tbody>
+		  </table>
+		</form>
+		
+	</body>
+</html>
+

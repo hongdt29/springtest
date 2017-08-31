@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+   <title>Spring Security Example </title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link rel="stylesheet" type="text/css"
+		href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
+	<link rel="stylesheet" type="text/css" 
+		href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/smoothness/jquery-ui.css"/>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+	<script type="text/javascript" src="/js/ui.dropdownchecklist-1.5-min.js"></script>
+	<script type="text/javascript" src="/js/FileSaver.js"></script>
+	<style>
+	th, td {
+		padding: 5px;
+	}
+	</style>
+
+<link rel="stylesheet" type="text/css"
+href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
+
+<script type="text/javascript">//<![CDATA[
+	
+	// Ham init, chuan bi confirm dialog va cac dropdown list
+	$(document).ready(function(){
+	    $('#confirmEditDialog').modal('show');
+	    $('#infoDialog').modal('show');
+	});
+
+	function submitEditContinue()
+   {
+	   $("#force").val("yes");
+	   $("#frmVital").submit();
+   }
+ //]]>
+</script>
+</head>
+<body>
+
+<div class="container">
+   <div class="row col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3" style="margin-top:20px">
+       <form id="frmVital" th:action="@{/vitalset}" th:object="${vitalForm}" method="post">
+       <input type ="hidden" th:field="*{version}"/>
+       <input type ="hidden" name="force" id="force" value="no"/>
+       
+              <div class="form-group">
+              <h5 class="text-danger text-center">
+				<span th:text="${errorMsg}"></span>
+				</h5>
+
+              <label class="control-label col-sm-2">Temp Max</label>
+                  <input type="text" th:field="*{temperatureMax}"
+                  class="form-control col-sm-4" />
+                  <span th:if="${#fields.hasErrors('temperatureMax')}" th:errors="*{temperatureMax}">Name Error</span>
+                  
+               <label class="control-label col-sm-2">Temp Min</label>
+                  <input type="text" th:field="*{temperatureMin}"
+                  class="form-control col-sm-4" />
+                  <span th:if="${#fields.hasErrors('temperatureMin')}" th:errors="temperatureMin">Name Error</span>
+                  
+              </div>
+              <br/>
+              <div class="form-group">
+              <label class="control-label col-sm-2">Heart Max</label>
+                  <input type="text" th:field="*{heartrateMax}"
+                  class="form-control col-sm-4" />
+                  <span th:if="${#fields.hasErrors('heartrateMax')}" th:errors="heartrateMax">Name Error</span>
+                  
+               <label class="control-label col-sm-2">Heart Min</label>
+                  <input type="text" th:field="*{heartrateMin}"
+                  class="form-control col-sm-4" />
+                  <span th:if="${#fields.hasErrors('heartrateMin')}" th:errors="heartrateMin">Name Error</span>
+                  
+              </div>
+              <br/>
+              <div class="row">
+                  <div class="col-xs-6 col-sm-6 col-md-6">
+                      <input type="submit" class="btn btn-lg btn-primary btn-block" value="Save"/>
+                  </div>
+                  <div class="col-xs-6 col-sm-6 col-md-6">
+                  </div>
+              </div>
+              <br/>
+             
+              
+       </form>
+   </div>
+
+
+   <div class="modal fade" id="confirmEditDialog" th:if="${confirmEditMsg != null}">
+      <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal">&times;</button>
+	        <h4 class="modal-title">Message</h4>
+	      </div>
+	      <div class="modal-body">
+	        <p th:text="${confirmEditMsg}"></p>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal" 
+	        	onclick="submitEditContinue()">Yes</button>
+	        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
+
+<div class="modal fade" id="infoDialog" th:if="${infoMsg != null}">
+      <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal">&times;</button>
+	        <h4 class="modal-title">Message</h4>
+	      </div>
+	      <div class="modal-body">
+	        <p th:text="${infoMsg}"></p>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
+</div>
+</body>
+</html>
