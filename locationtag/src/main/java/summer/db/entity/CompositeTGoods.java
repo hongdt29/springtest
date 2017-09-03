@@ -39,6 +39,9 @@ public class CompositeTGoods {
 	
 	public void setOrderBy(String orderBy) {
 		this.orderBy = orderBy;
+		if (orderBy == null || orderBy.equals("")) {
+			this.orderBy = "id ASC";
+		}
 	}
    	public Boolean getDeleteFlag() {
 		return deleteFlag;
@@ -51,18 +54,27 @@ public class CompositeTGoods {
 	}
 	public void setId(String id) {
 		this.id = id;
+		if (id.equals("")) {
+			this.id = "%";
+		}
 	}
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
+		if (name.equals("")) {
+			this.name = "%";
+		}
 	}
 	public String getRemark() {
 		return remark;
 	}
 	public void setRemark(String remark) {
 		this.remark = remark;
+		if (remark.equals("")) {
+			this.remark = "%";
+		}
 	}
 
 	public String getIdtag() {
@@ -70,6 +82,9 @@ public class CompositeTGoods {
 	}
 	public void setIdtag(String idtag) {
 		this.idtag = idtag;
+		if (idtag.equals("")) {
+			this.idtag = "%";
+		}
 	}
 
 	public List<String> getIdfloor() {
@@ -78,6 +93,9 @@ public class CompositeTGoods {
 
 	public void setIdfloor(List<String> idfloor) {
 		this.idfloor = idfloor;
+		if (idfloor == null || idfloor.size() == 0) {
+			this.idfloor.add("%");
+		}
 	}
 
 	public List<String> getIdcompany() {
@@ -86,6 +104,9 @@ public class CompositeTGoods {
 
 	public void setIdcompany(List<String> idcompany) {
 		this.idcompany = idcompany;
+		if (idcompany == null || idcompany.size() == 0) {
+			this.idcompany.add("%");
+		}
 	}
 
 	public List<String> getIdcategory() {
@@ -94,6 +115,9 @@ public class CompositeTGoods {
 
 	public void setIdcategory(List<String> idcategory) {
 		this.idcategory = idcategory;
+		if (idcategory == null || idcategory.size() == 0) {
+			this.idcategory.add("%");
+		}
 	}
 
 	public String getFloorname() {

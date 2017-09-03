@@ -6,7 +6,21 @@ public class CategorySearchForm {
 	private String searchID;
 	private String searchName;
 	private List<String> deleteList;
+	private String orderColumn;
+	private String orderSort;
 	
+	public String getOrderColumn() {
+		return orderColumn;
+	}
+	public void setOrderColumn(String orderColumn) {
+		this.orderColumn = orderColumn;
+	}
+	public String getOrderSort() {
+		return orderSort;
+	}
+	public void setOrderSort(String orderSort) {
+		this.orderSort = orderSort;
+	}
 	public String getSearchID() {
 		return searchID;
 	}

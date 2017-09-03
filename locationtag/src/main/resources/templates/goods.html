@@ -343,7 +343,7 @@
 	   </thead>
 	   <tbody>
 		<!--  CHo nay de hien thi tung gia tri, goodslist la bien model ta add tu controller model.addAttribute("goodslist", goods); -->
-	     <tr th:each="row,iterStat : ${goodslist}">
+	     <tr th:each="row,iterStat : *{results}">
 	       <td th:text="${iterStat.count}">#</td>
 	       <td>
        			<span th:text="${{row.id}}" >#</span>

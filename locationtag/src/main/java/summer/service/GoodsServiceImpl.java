@@ -14,6 +14,7 @@ import summer.db.entity.McategoryExample;
 import summer.db.entity.Muser;
 import summer.db.entity.Tgoods;
 import summer.db.entity.TgoodsExample;
+import summer.formmodel.SearchGoodsDTO;
 
 @Service
 public class GoodsServiceImpl implements IGoodsService {
@@ -34,6 +35,24 @@ public class GoodsServiceImpl implements IGoodsService {
 	public int insertNewGoods(Tgoods goods) {
 		return mapperGoods.insert(goods);
 		
+	}
+
+	@Override
+	public SearchGoodsDTO searchGoods(SearchGoodsDTO dto) {
+		CompositeTGoods condition = new CompositeTGoods();
+		condition.setId(dto.getId());
+		condition.setIdcategory(dto.getCategoryId());
+		condition.setIdcompany(dto.getCompanyId());
+		condition.setIdfloor(dto.getFloorId());
+		condition.setIdtag(dto.getTagId());
+		condition.setRemark(dto.getRemark());
+		condition.setName(dto.getName());
+		condition.setOrderBy(dto.getOrderCause());
+		condition.setDeleteFlag(false);
+		
+		dto.setResults(mapperGoods.getAllGoods(condition));
+		
+		return dto;
 	}
 	
 

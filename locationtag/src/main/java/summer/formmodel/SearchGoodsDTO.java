@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import summer.db.entity.CompositeTGoodsResult;
-import summer.db.entity.Mcategory;
 
-public class GoodsForm {
+public class SearchGoodsDTO {
 	private String id;
 	private String name;
 	private String remark;
@@ -15,42 +14,24 @@ public class GoodsForm {
 	private List<String> floorId;
 	private List<String> companyId;
 	private String tagId;
-	private List<String> deleteList;
-	private String orderCause;
-	private int currentPage;
-	private int itemPerPage;
-	private int totalCount;
 	private List<CompositeTGoodsResult> results;
 	
-	private int displayFlag;
-	public GoodsForm()
+	private String orderCause;
+	private int offset;
+	private int limit;
+	private int totalCount;
+	public SearchGoodsDTO()
 	{
 		id = "";
 		name = "";
 		remark = "";
-		categoryId = new ArrayList<>();
-		floorId = new ArrayList<>();
-		companyId = new ArrayList<>();
+		categoryId = new ArrayList<String>();
+		floorId = new ArrayList<String>();
+		companyId = new ArrayList<String>();
+		results = new ArrayList<CompositeTGoodsResult>();
 		tagId = "";
-		orderCause = "id ASC";
 	}
 	
-	public int getDisplayFlag() {
-		return displayFlag;
-	}
-
-	public void setDisplayFlag(int displayFlag) {
-		this.displayFlag = displayFlag;
-	}
-
-	public List<CompositeTGoodsResult> getResults() {
-		return results;
-	}
-
-	public void setResults(List<CompositeTGoodsResult> results) {
-		this.results = results;
-	}
-
 	public int getTotalCount() {
 		return totalCount;
 	}
@@ -67,68 +48,47 @@ public class GoodsForm {
 		this.orderCause = orderCause;
 	}
 
-	public int getCurrentPage() {
-		return currentPage;
+	public int getOffset() {
+		return offset;
 	}
 
-	public void setCurrentPage(int currentPage) {
-		this.currentPage = currentPage;
+	public void setOffset(int offset) {
+		this.offset = offset;
 	}
 
-	public int getItemPerPage() {
-		return itemPerPage;
+	public int getLimit() {
+		return limit;
 	}
 
-	public void setItemPerPage(int itemPerPage) {
-		this.itemPerPage = itemPerPage;
+	public void setLimit(int limit) {
+		this.limit = limit;
 	}
 
-	public List<String> getFloorId() {
-		return floorId;
+	public List<CompositeTGoodsResult> getResults() {
+		return results;
 	}
-	public void setFloorId(List<String> floorId) {
-		this.floorId = floorId;
+
+	public void setResults(List<CompositeTGoodsResult> results) {
+		this.results = results;
 	}
 
 	public String getId() {
 		return id;
 	}
-
 	public void setId(String id) {
 		this.id = id;
 	}
-
 	public String getName() {
 		return name;
 	}
-
 	public void setName(String name) {
 		this.name = name;
 	}
-
 	public String getRemark() {
 		return remark;
 	}
-
 	public void setRemark(String remark) {
 		this.remark = remark;
-	}
-	
-	public String getTagId() {
-		return tagId;
-	}
-
-	public void setTagId(String tagId) {
-		this.tagId = tagId;
-	}
-
-	
-	public List<String> getDeleteList() {
-		return deleteList;
-	}
-
-	public void setDeleteList(List<String> deleteList) {
-		this.deleteList = deleteList;
 	}
 	public List<String> getCategoryId() {
 		return categoryId;
@@ -136,11 +96,23 @@ public class GoodsForm {
 	public void setCategoryId(List<String> categoryId) {
 		this.categoryId = categoryId;
 	}
+	public List<String> getFloorId() {
+		return floorId;
+	}
+	public void setFloorId(List<String> floorId) {
+		this.floorId = floorId;
+	}
 	public List<String> getCompanyId() {
 		return companyId;
 	}
 	public void setCompanyId(List<String> companyId) {
 		this.companyId = companyId;
+	}
+	public String getTagId() {
+		return tagId;
+	}
+	public void setTagId(String tagId) {
+		this.tagId = tagId;
 	}
 	
 }

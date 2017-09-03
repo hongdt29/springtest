@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import summer.db.entity.Mcategory;
@@ -31,12 +32,23 @@ import summer.service.ICategoryService;
 import summer.util.PageWrapper;
 
 @Controller
+@SessionAttributes(value = {"categorydata"}, types = {CategorySearchForm.class})
 public class CategoryController {
 	public static String S_SEARCH_ID = "s_searchid";
 	public static String S_SEARCH_NAME = "s_searchname";
 	public static String S_SORT_COLUMN = "s_sortcol";
 	public static String S_SORT_ORDER = "s_sortorder";
-	
+	@ModelAttribute("categorydata")
+	public CategorySearchForm getSearchForm()
+	{
+		CategorySearchForm result = new CategorySearchForm();
+		result.setDeleteList(new ArrayList<String>());
+		result.setSearchID("");
+		result.setSearchName("");
+		result.setOrderColumn("id");
+		result.setOrderSort("DESC");
+		return result;
+	}
 	@Autowired
 	private ICategoryService categoryService;
 	@GetMapping("/categorylist")
@@ -47,48 +59,27 @@ public class CategoryController {
 
 		String dbOrderBy = "";
 		
-		String s_sortColum = (String) session.getAttribute(S_SORT_COLUMN);		
-		String s_sortOrder = (String) session.getAttribute(S_SORT_ORDER);
+		String s_sortColum = searchData.getOrderColumn();
+		String s_sortOrder = searchData.getOrderSort();
 		
-		if (s_sortColum== null || s_sortOrder == null ) {
-			// Truong hop nay chua duoc luu, ta set 1 gia tri default
-			dbOrderBy = "id ASC";
-			session.setAttribute(S_SORT_COLUMN, "id");
-			session.setAttribute(S_SORT_ORDER, "ASC");
-			
-			// Set 2 bien nay vao model de hien thi icon sorting tren view
-			model.addAttribute("mOrderBy", "id");
-			model.addAttribute("mOrder", "ASC");
-		}else {
-			// bien OrderBy string de sap xep trong DB
-			dbOrderBy = s_sortColum + " " + s_sortOrder;
-			
-			model.addAttribute("mOrderBy", s_sortColum);
-			model.addAttribute("mOrder", s_sortOrder);
-		}
-		System.out.println("OrderBy : " + dbOrderBy);
+		dbOrderBy = s_sortColum + " " + s_sortOrder;
+		model.addAttribute("mOrderBy", s_sortColum);
+		model.addAttribute("mOrder", s_sortOrder);
 		
-		String s_searchId= (String) session.getAttribute(S_SEARCH_ID);
-		String s_searchName = (String) session.getAttribute(S_SEARCH_NAME);
-		if(s_searchId !=null && s_searchName != null ) {
-			searchData.setSearchID(s_searchId);
-			searchData.setSearchName(s_searchName);
-			
-			if (s_searchId.equals("")&& s_searchName.equals("")) {
-				 cates = categoryService.getAllCategoryNotDeleted(dbOrderBy);
-			}else if(s_searchId.equals("") == false && s_searchName.equals("") == true) {
-				// ID not empty, nameis empty
-				 cates = categoryService.getAllCategoryByID(s_searchId, dbOrderBy);
-			} else if(s_searchId.equals("") == true && s_searchName.equals("") == false) {
-				// Name not empty, ID is  empty
-				 cates = categoryService.getAllCategoryByName(s_searchName, dbOrderBy);
-			} else if(s_searchId.equals("") == false && s_searchName.equals("") == false) {
-				 cates = categoryService.getAllCategoryByNameAndId(s_searchId, s_searchName, dbOrderBy);
-			}
-			
-		}else {
+		String s_searchId= searchData.getSearchID();
+		String s_searchName = searchData.getSearchName();
+		if (s_searchId.equals("")&& s_searchName.equals("")) {
 			 cates = categoryService.getAllCategoryNotDeleted(dbOrderBy);
+		}else if(s_searchId.equals("") == false && s_searchName.equals("") == true) {
+			// ID not empty, nameis empty
+			 cates = categoryService.getAllCategoryByID(s_searchId, dbOrderBy);
+		} else if(s_searchId.equals("") == true && s_searchName.equals("") == false) {
+			// Name not empty, ID is  empty
+			 cates = categoryService.getAllCategoryByName(s_searchName, dbOrderBy);
+		} else if(s_searchId.equals("") == false && s_searchName.equals("") == false) {
+			 cates = categoryService.getAllCategoryByNameAndId(s_searchId, s_searchName, dbOrderBy);
 		}
+			
 		if (cates.size() >5000) {
 			model.addAttribute("errorSearch", "Size too much");
 		} else if (cates.isEmpty()) {
@@ -97,12 +88,6 @@ public class CategoryController {
 			// search OK, no error
 			model.addAttribute("categorydatalist", cates);
 		}
-		
-		
-//		We do the Conversion to Page display
-//		Pageable newPage = new PageRequest(pageable.getPageNumber(), 3);
-		
-		
 		
 		return "category";
 	}
@@ -114,26 +99,14 @@ public class CategoryController {
 		// Lay cac gia tri tu DB ra de tim ra order by clause
 		String dbOrderBy = "";
 		
-		String s_sortColum = (String) session.getAttribute(S_SORT_COLUMN);
-		String s_sortOrder = (String) session.getAttribute(S_SORT_ORDER);
-		if (s_sortColum== null || s_sortOrder == null ) {
-			dbOrderBy = "id ASC";
-			session.setAttribute(S_SORT_COLUMN, "id");
-			session.setAttribute(S_SORT_ORDER, "ASC");
-			
-			model.addAttribute("mOrderBy", "id");
-			model.addAttribute("mOrder", "ASC");
-		}else {
-			dbOrderBy = s_sortColum + " " + s_sortOrder;
-			
-			model.addAttribute("mOrderBy", s_sortColum);
-			model.addAttribute("mOrder", s_sortOrder);
-		}
-		System.out.println("OrderBy : " + dbOrderBy);
+		String s_sortColum = searchData.getOrderColumn();
+		String s_sortOrder = searchData.getOrderSort();
+	
+		dbOrderBy = s_sortColum + " " + s_sortOrder;
 		
-//
-//		List<Mcategory> cates = categoryService.getAllCategoryNotDeleted();
-//		model.addAttribute("categorydatalist", cates);
+		model.addAttribute("mOrderBy", s_sortColum);
+		model.addAttribute("mOrder", s_sortOrder);
+		
 		String categoryId = searchData.getSearchID();
 		String categoryName = searchData.getSearchName();
 		if (categoryId.equals("")&& categoryName.equals("")) {
@@ -152,8 +125,6 @@ public class CategoryController {
 			model.addAttribute("categorydatalist", cates);
 		}
 		
-		session.setAttribute(S_SEARCH_NAME, categoryName);
-		session.setAttribute(S_SEARCH_ID, categoryId);
 		return "category";
 	}
 	
@@ -251,16 +222,12 @@ public class CategoryController {
 			Model model, HttpServletRequest request, HttpSession session){
 		System.out.println("[DBG] CategorySortID called");
 		
-		session.setAttribute(S_SORT_COLUMN, "id");
-		String sortOrder = (String) session.getAttribute(S_SORT_ORDER);
-		if (sortOrder == null) {
-			session.setAttribute(S_SORT_ORDER, "ASC");
+		searchData.setOrderColumn("id");
+		String sortOrder = (String) searchData.getOrderSort();
+		if( sortOrder.equals("ASC")== true) {
+			searchData.setOrderSort("DESC");
 		}else {
-			if( sortOrder.equals("ASC")== true) {
-				session.setAttribute(S_SORT_ORDER, "DESC");
-			}else {
-				session.setAttribute(S_SORT_ORDER, "ASC");
-			}
+			searchData.setOrderSort("ASC");
 		}
 		// Bay gio chuyen sang search controller voi nhung gia tri minh luu vao session roi
 		return "redirect:/categorylist";
@@ -270,17 +237,12 @@ public class CategoryController {
 	public String CategorySortName(@ModelAttribute("categorydata") CategorySearchForm searchData,
 			Model model, HttpServletRequest request, HttpSession session){
 		System.out.println("[DBG] CategorySortID called");
-		
-		session.setAttribute(S_SORT_COLUMN, "name");
-		String sortOrder = (String) session.getAttribute(S_SORT_ORDER);
-		if (sortOrder == null) {
-			session.setAttribute(S_SORT_ORDER, "ASC");
+		searchData.setOrderColumn("name");
+		String sortOrder = (String) searchData.getOrderSort();
+		if( sortOrder.equals("ASC")== true) {
+			searchData.setOrderSort("DESC");
 		}else {
-			if( sortOrder.equals("ASC")== true) {
-				session.setAttribute(S_SORT_ORDER, "DESC");
-			}else {
-				session.setAttribute(S_SORT_ORDER, "ASC");
-			}
+			searchData.setOrderSort("ASC");
 		}
 		return "redirect:/categorylist";
 	}

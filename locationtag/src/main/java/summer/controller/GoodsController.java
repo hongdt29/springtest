@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import summer.db.entity.CompositeTGoods;
@@ -42,6 +43,7 @@ import summer.formmodel.CategoryEditForm;
 import summer.formmodel.CategorySearchForm;
 import summer.formmodel.GoodsCreateForm;
 import summer.formmodel.GoodsForm;
+import summer.formmodel.SearchGoodsDTO;
 import summer.service.ICategoryService;
 import summer.service.ICompanyService;
 import summer.service.IFloorService;
@@ -50,6 +52,7 @@ import summer.service.ITagService;
 import summer.util.PageWrapper;
 
 @Controller
+//@SessionAttributes(value = {"goodsform"}, types = {GoodsForm.class})
 public class GoodsController {
 	public static String SESSION_FLOOR = "s_goods_floor";
 	public static String SESSION_GOODSID = "s_goods_goodsid";
@@ -83,6 +86,14 @@ public class GoodsController {
 	@Autowired
 	private HttpServletResponse response;
 	
+	@ModelAttribute("goodsform")
+	public GoodsForm getSearchForm()
+	{
+		GoodsForm result = new GoodsForm();
+	
+		return result;
+	}
+	
 	@GetMapping("/goodslist")
 	public String GoodsListGet(@ModelAttribute("goodsform") GoodsForm goodsform,
 			Model model){
@@ -90,7 +101,8 @@ public class GoodsController {
 		
 		// 1. Load data tu DB len de dua vao dropdown list
 		//   Tach thanh 1 ham rieng de cho de quan ly, xem ham nay phia ben duoi
-		loadDataForDropdown(model, false);
+		loadDataForDropdown(model, true);
+		loadFromSession(goodsform);
 		
 		// 2. Load cac data cua Search FOrm cu tren session vao bien "goodsform"
 		//		nho do ma cac Text se lai duoc hien thi tren Text box
@@ -105,22 +117,19 @@ public class GoodsController {
 		model.addAttribute("mOrderBy", sessionOrderBy);
 		
 		// 3. Thuc hien viec search trong DB
-		List<CompositeTGoodsResult> goods = searchDataFromDB(goodsform, sessionOrderBy);
-		model.addAttribute("goodslist", goods);
-
-		// 4. Ta them buoc check neu co message cho Export hay khong tu session
-		String exportMsg = (String) session.getAttribute(SESSION_EXPORTMSG);
-		if (exportMsg != null) {
-			if (exportMsg.equals("DONE")) {
-				// Truong hop nay nghia la da DONE viec save, ta hien thi dialog bang
-				// viec set attribute resultExportMsg
-				model.addAttribute("resultExportMsg", "Export Done");
-			} else {
-				// Neu khog, co error, ta set message
-				model.addAttribute("errorExport", exportMsg);
-			}
-			session.setAttribute(SESSION_EXPORTMSG, null);
-		}
+		SearchGoodsDTO searchGoodsDto = new SearchGoodsDTO();
+		searchGoodsDto.setFloorId(goodsform.getFloorId());
+		searchGoodsDto.setId(goodsform.getId());
+		searchGoodsDto.setName(goodsform.getName());
+		searchGoodsDto.setRemark(goodsform.getRemark());
+		searchGoodsDto.setCategoryId(goodsform.getCategoryId());
+		searchGoodsDto.setCompanyId(goodsform.getCompanyId());
+		searchGoodsDto.setTagId(goodsform.getTagId());
+		searchGoodsDto.setOrderCause(goodsform.getOrderCause());
+		
+		searchGoodsDto = goodsService.searchGoods(searchGoodsDto);
+		
+		goodsform.setResults(searchGoodsDto.getResults());
 		
 		return "goods";
 	}
@@ -130,10 +139,11 @@ public class GoodsController {
 			Model model,
 			@RequestParam("btnSearch") String btnSearchOrderLogic){
 		System.out.println("[DBG] GoodsListSearch called:" + goodsform.getCategoryId());
+		goodsform.setDisplayFlag(1);
 		
 		// 1. Load data tu DB len de dua vao dropdown list
 		//   Tach thanh 1 ham rieng de cho de quan ly, xem ham nay phia ben duoi
-		loadDataForDropdown(model, false);
+		loadDataForDropdown(model, true);
 		
 		// btnSearchOrderLogic the hien Order by information tren form. Neu chua co thi ta set mac dinh
 		// id ASC, neu co roi thi ta luu vao session va search DB nhu order nay
@@ -161,29 +171,30 @@ public class GoodsController {
 		// set thu tu Order by de hien thi icon tren HTML
 		model.addAttribute("mOrderBy", btnSearchOrderLogic);
 		
-		// 2. Thuc hien viec search trong DB
-		List<CompositeTGoodsResult> goods = searchDataFromDB(goodsform, btnSearchOrderLogic);
-		model.addAttribute("goodslist", goods);
-
-		// 3. store cac gia tri search vao session
-		storeToSession(goodsform);
+		goodsform.setOrderCause(btnSearchOrderLogic);
 		
-		// 4. Ta them buoc check neu co message cho Export hay khong tu session
-		String exportMsg = (String) session.getAttribute(SESSION_EXPORTMSG);
-		if (exportMsg != null) {
-			if (exportMsg.equals("DONE")) {
-				// Truong hop nay nghia la da DONE viec save, ta hien thi dialog bang
-				// viec set attribute resultExportMsg
-				model.addAttribute("resultExportMsg", "Export Done");
-			} else {
-				// Neu khog, co error, ta set message
-				model.addAttribute("errorExport", exportMsg);
-			}
-			session.setAttribute(SESSION_EXPORTMSG, null);
+		// 3. Thuc hien viec search trong DB
+		SearchGoodsDTO searchGoodsDto = new SearchGoodsDTO();
+		searchGoodsDto.setFloorId(goodsform.getFloorId());
+		searchGoodsDto.setId(goodsform.getId());
+		searchGoodsDto.setName(goodsform.getName());
+		searchGoodsDto.setRemark(goodsform.getRemark());
+		searchGoodsDto.setCategoryId(goodsform.getCategoryId());
+		searchGoodsDto.setCompanyId(goodsform.getCompanyId());
+		searchGoodsDto.setTagId(goodsform.getTagId());
+		searchGoodsDto.setOrderCause(goodsform.getOrderCause());
+		
+		searchGoodsDto = goodsService.searchGoods(searchGoodsDto);
+		List<CompositeTGoodsResult> lstResult = searchGoodsDto.getResults();
+		goodsform.setResults(lstResult);
+		if (lstResult.size() == 0) {
+			// error  1
+		} else if (lstResult.size() > 500) {
+			// error 2
+		} else {
+			storeToSession(goodsform);
 		}
-		
-		
-		
+
 		return "goods";
 	}
 	
