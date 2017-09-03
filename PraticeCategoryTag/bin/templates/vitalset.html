@@ -29,13 +29,26 @@ href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
 	
 	// Ham init, chuan bi confirm dialog va cac dropdown list
 	$(document).ready(function(){
-	    $('#confirmEditDialog').modal('show');
+	    $('#confirmDialog').modal('show');
 	    $('#infoDialog').modal('show');
+	    
+	    $('#temperatureMin').change(function() {
+	        format2Decimal('#temperatureMin');
+	    });
+	    $('#temperatureMax').change(function() {
+	        format2Decimal('#temperatureMax');
+	    });
 	});
-
+	
+	function format2Decimal(idInput){
+		var floatVal = parseFloat($(idInput).val());
+		if (!Number.isNaN(floatVal)) {
+			$(idInput).val(floatVal.toFixed(2));
+		}
+	}
 	function submitEditContinue()
    {
-	   $("#force").val("yes");
+	   $("<input/>").attr("name", "save").appendTo("#frmVital");
 	   $("#frmVital").submit();
    }
  //]]>
@@ -47,8 +60,7 @@ href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
    <div class="row col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3" style="margin-top:20px">
        <form id="frmVital" th:action="@{/vitalset}" th:object="${vitalForm}" method="post">
        <input type ="hidden" th:field="*{version}"/>
-       <input type ="hidden" name="force" id="force" value="no"/>
-       
+
               <div class="form-group">
               <h5 class="text-danger text-center">
 				<span th:text="${errorMsg}"></span>
@@ -62,7 +74,7 @@ href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
                <label class="control-label col-sm-2">Temp Min</label>
                   <input type="text" th:field="*{temperatureMin}"
                   class="form-control col-sm-4" />
-                  <span th:if="${#fields.hasErrors('temperatureMin')}" th:errors="temperatureMin">Name Error</span>
+                  <span th:if="${#fields.hasErrors('temperatureMin')}" th:errors="*{temperatureMin}">Name Error</span>
                   
               </div>
               <br/>
@@ -70,30 +82,29 @@ href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
               <label class="control-label col-sm-2">Heart Max</label>
                   <input type="text" th:field="*{heartrateMax}"
                   class="form-control col-sm-4" />
-                  <span th:if="${#fields.hasErrors('heartrateMax')}" th:errors="heartrateMax">Name Error</span>
+                  <span th:if="${#fields.hasErrors('heartrateMax')}" th:errors="*{heartrateMax}">Name Error</span>
                   
                <label class="control-label col-sm-2">Heart Min</label>
                   <input type="text" th:field="*{heartrateMin}"
                   class="form-control col-sm-4" />
-                  <span th:if="${#fields.hasErrors('heartrateMin')}" th:errors="heartrateMin">Name Error</span>
+                  <span th:if="${#fields.hasErrors('heartrateMin')}" th:errors="*{heartrateMin}">Name Error</span>
                   
               </div>
               <br/>
               <div class="row">
                   <div class="col-xs-6 col-sm-6 col-md-6">
-                      <input type="submit" class="btn btn-lg btn-primary btn-block" value="Save"/>
+                      <input type="submit" class="btn btn-lg btn-primary btn-block" name="check" value = "Save1" />
                   </div>
                   <div class="col-xs-6 col-sm-6 col-md-6">
                   </div>
               </div>
               <br/>
+              <span th:text="*{version}"> </span>
              
               
        </form>
    </div>
-
-
-   <div class="modal fade" id="confirmEditDialog" th:if="${confirmEditMsg != null}">
+   <div class="modal fade" id="confirmDialog" th:if="${confirmMsg != null}">
       <div class="modal-dialog">
 	    <div class="modal-content">
 	      <div class="modal-header">
@@ -101,7 +112,7 @@ href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
 	        <h4 class="modal-title">Message</h4>
 	      </div>
 	      <div class="modal-body">
-	        <p th:text="${confirmEditMsg}"></p>
+	        <p th:text="${confirmMsg}"></p>
 	      </div>
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-default" data-dismiss="modal" 

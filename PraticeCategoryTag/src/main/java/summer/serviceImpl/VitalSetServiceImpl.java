@@ -14,27 +14,23 @@ import summer.service.VitalSetService;
 public class VitalSetServiceImpl implements VitalSetService {
 	@Autowired
 	MvitalsetMapper mapper;
-	
-	@Override
-	public Mvitalset getVital(int managerNo) {
-		MvitalsetExample query = new MvitalsetExample();
-		query.createCriteria().andManagerNoEqualTo(managerNo).andDeleteFlagNotEqualTo(true);
-		List<Mvitalset> mvitalset =  mapper.selectByExample(query);
-		if (mvitalset !=null && mvitalset.size()==1){
-			return mvitalset.get(0);
-		}else {
-			return null;
-		}
-			
-	}
 
 	@Override
-	public int saveVital(Mvitalset vital) {
+	public Mvitalset getVitalData(int managerNo) {
 		MvitalsetExample query = new MvitalsetExample();
+		query.createCriteria().andDeleteFlagEqualTo(false).andManagerNoEqualTo(managerNo);
+		List<Mvitalset> vitalData = mapper.selectByExample(query);
+		if (vitalData != null && !vitalData.isEmpty()) {
+			return mapper.selectByExample(query).get(0);
+		}
+		return null;
+	}
+	public int updateVitalData(Mvitalset vital) {
+		MvitalsetExample query = new MvitalsetExample();
+		query.createCriteria().andDeleteFlagEqualTo(false).andManagerNoEqualTo(vital.getManagerNo());
 		int currentVersion = vital.getVersion();
 		vital.setVersion(currentVersion +1);
-		query.createCriteria().andDeleteFlagNotEqualTo(true).andManagerNoEqualTo(vital.getManagerNo());
 		return mapper.updateByExampleSelective(vital, query);
 	}
-
+	
 }
