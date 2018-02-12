@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Main Page</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<!--   <link rel="stylesheet" href="./jquery-ui-1.12.1/jquery-ui.css">
+  <script src="./jquery-ui-1.12.1/jquery-ui.js"></script> -->
+  <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<script>
+  // this function is called when a page is load
+  $(function() {
+    $.datepicker.regional['ja'] = {
+        closeText: "閉じる",
+        prevText: "&#x3C;前",
+        nextText: "次&#x3E;",
+        currentText: "今日",
+        monthNames: [ "1月","2月","3月","4月","5月","6月",
+        "7月","8月","9月","10月","11月","12月" ],
+        monthNamesShort: [ "1月","2月","3月","4月","5月","6月",
+        "7月","8月","9月","10月","11月","12月" ],
+        dayNames: [ "日曜日","月曜日","火曜日","水曜日","木曜日","金曜日","土曜日" ],
+        dayNamesShort: [ "日","月","火","水","木","金","土" ],
+        dayNamesMin: [ "日","月","火","水","木","金","土" ],
+        weekHeader: "週",
+        dateFormat: "yy/mm/dd",
+        firstDay: 0,
+        isRTL: false,
+        showMonthAfterYear: true,
+        yearSuffix: "年" };
+    $.datepicker.setDefaults($.datepicker.regional['ja']);
+
+
+    $(".jpdatepicker").datepicker({
+      dateFormat: "yy/mm/dd",
+      changeMonth: true,
+      changeYear: true,
+      yearRange: "1926:2018",
+      // onSelect is called when user select a date
+      onSelect: function(dateText, inst) {
+          console.log("onSelect:" + dateText);
+          var date = new Date(dateText);
+          var heiseiText = getHeiseiYear(date.getFullYear());
+          $(this).val(heiseiText + dateText);
+      },
+      // beforeShow is called before the picker show up. Here we need to remove the Heisei text....
+      beforeShow: function(input, inst) { 
+        var currentTextWithHeisei = $(this).val();
+        var pureDateText = removeHeiseiYearText(currentTextWithHeisei);
+        //$(this).val(pureDateText);
+      },
+    });
+  });
+  // Convert calendar year to a text with Heisei year
+  // i.e 2017   ->   "(平成-27)"
+  function getHeiseiYear(calendarYear) {
+    var heisei1 = 1989;
+    var showa1 = 1926;
+
+    if (calendarYear <= 2018 && calendarYear >= heisei1) {
+      return "(平成-" + (calendarYear - heisei1 + 1) + ")";
+    } else if (calendarYear < heisei1 && calendarYear >= showa1) {
+      return "(昭和-" + (calendarYear - showa1 + 1) + ")";
+    }
+    return calendarYear;
+  }
+  // from text "(Heise-28)2018-02-02", convert to "2018-02-02" only
+  function removeHeiseiYearText(heiseiText) {
+    var indexOfHeisei = heiseiText.indexOf(")");
+    if (indexOfHeisei >= 0) {
+      // return string from index to End
+      return heiseiText.substring(indexOfHeisei+1);
+    }
+    return heiseiText;
+  }
+  
+
+
+
+
+
+  function changeWhite()
+  {
+    document.body.style.backgroundColor = "rgb(191, 75, 209)";
+  }
+  function changeGray()
+  {
+    document.body.style.backgroundColor = "gray";
+  }
+  function changeCyan()
+  {
+    document.body.style.backgroundColor = "cyan";
+  }
+  function largeText()
+  {
+    document.body.style.fontSize = "2em"; 
+  }
+  function mediumText()
+  {
+    document.body.style.fontSize = "1em"; 
+  }
+  function smallText()
+  {
+    document.body.style.fontSize = "0.7em"; 
+  }
+
+
+
+
+
+
+  function changeWhiteElement(className)
+  {
+    var content = document.getElementsByClassName(className);
+    var i;
+    for (i = 0; i < content.length; i++) {
+        content[i].style.backgroundColor = "white";
+    }
+  }
+  function changeGrayElement(className)
+  {
+    var content = document.getElementsByClassName(className);
+    var i;
+    for (i = 0; i < content.length; i++) {
+        content[i].style.backgroundColor = "gray";
+    }
+  }
+  function changeCyanElement(className)
+  {
+    var content = document.getElementsByClassName(className);
+    var i;
+    for (i = 0; i < content.length; i++) {
+        content[i].style.backgroundColor = "cyan";
+    }
+  }
+
+
+
+  function largeTextElement(id)
+  {
+    var content = document.getElementById(id);
+    content.style.fontSize = "20px"; 
+  }
+  function mediumTextElement(id)
+  {
+    var content = document.getElementById(id);
+    content.style.fontSize = "14px"; 
+  }
+  function smallTextElement(id)
+  {
+    var content = document.getElementById(id);
+    content.style.fontSize = "8px"; 
+  }
+</script>
+
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+  <div style="margin-left: 10%">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="main_page.html">Main Page</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="#">Home</a></li>
+      <li><a href="#">Page 1</a></li>
+      <li><a href="#">Page 2</a></li>
+      <li><a href="#">Page 3</a></li>
+    </ul>
+  </div>
+</nav>
+
+
+<div class="container">
+  <button onclick="changeWhite()">White</button>
+  <button onclick="changeGray()">Gray</button>
+  <button onclick="changeCyan()">Cyan</button>
+  <br/>
+  <button onclick="changeWhiteElement('content-text')">White</button>
+  <button onclick="changeGrayElement('content-text')">Gray</button>
+  <button onclick="changeCyanElement('content-text')">Cyan</button>
+  <br/>
+  <label><input type="radio" name="rd
+  <div class="row">oText" onclick="largeText()" value="Large"/>Large</label>
+  <label><input type="radio" name="rdoText" onclick="mediumText()" value="Medium"/>Medium</label>
+  <label><input type="radio" name="rdoText" onclick="smallText()" value="Small"/>Small</label>
+  <br/>
+  <label><input type="radio" name="rdoText1" onclick="largeTextElement('content-table')" value="Large"/>Large Content</label>
+  <label><input type="radio" name="rdoText1" onclick="mediumTextElement('content-table')" value="Medium"/>Medium Content</label>
+  <label><input type="radio" name="rdoText1" onclick="smallTextElement('content-table')" value="Small"/>Small Content</label>
+
+    <div class="col-sm-1"></div>
+
+    <div class="col-sm-10">
+      <table class="table table-striped" id="content-table">
+        <thead>
+          <tr>
+            <th>Firstname</th>
+            <th>Lastname</th>
+            <th>Email</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>John</td>
+            <td>Doe</td>
+            <td>john@example.com</td>
+          </tr>
+          <tr>
+            <td>Mary</td>
+            <td>Moe</td>
+            <td>mary@example.com</td>
+          </tr>
+          <tr>
+            <td>July</td>
+            <td>Dooley</td>
+            <td>july@example.com</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="col-sm-1"></div>
+  </div>
+  <p class="content-text">
+    You cannot be sure how HTML will be displayed.
+
+    Large or small screens, and resized windows will create different results.
+
+    With HTML, you cannot change the output by adding extra spaces or extra lines in your HTML code.
+
+    The browser will remove any extra spaces and extra lines when the page is displayed:
+
+  </p>
+  <br/>
+  <p class="content-text">
+    The getElementsByClassName() method returns a collection of all elements in the document with the specified class name, as a NodeList object.
+
+    The NodeList object represents a collection of nodes. The nodes can be accessed by index numbers. The index starts at 0.
+
+    Tip: You can use the length property of the NodeList object to determine the number of elements with a specified class name, then you can loop through all elements and extract the info you want.
+  </p>
+
+  <br/>
+  <input type="text" class="jpdatepicker">
+</div>
+
+</body>
+</html>
