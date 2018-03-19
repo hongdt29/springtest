@@ -49,6 +49,7 @@ public class CategoryController {
 		result.setOrderSort("DESC");
 		return result;
 	}
+	// AUto wire is ...
 	@Autowired
 	private ICategoryService categoryService;
 	@GetMapping("/categorylist")
